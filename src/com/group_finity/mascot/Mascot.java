@@ -196,7 +196,7 @@ public class Mascot {
 	}
 
 	public MascotImage getImage() {
-		return this.image;
+		return this.image == null ? null : this.image.getScaled(MascotScale.getPercent());
 	}
 
 	public void setImage(final MascotImage image) {

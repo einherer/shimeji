@@ -27,7 +27,8 @@ Eine moderne, praktische Anwendung mit Desktop-Maskottchen (Shimeji) für **Wind
   - Behebt fehlerhafte Bodenkollisionen und endloses Fallen bei skalierten Windows-Anzeigen (100 %, 125 %, 150 %, 200 %).
   - Eine Toleranz von ±2 Pixeln bei Boden- und Wandgrenzen ermöglicht sanftes Landen.
 - **Integrierte Einstellungsoberfläche**:
-  - `ShimejiSettings.exe` / `shimeji_settings.py` (Python mit Tkinter).
+  - `ShimejiSettings.exe` (native Windows-Oberfläche) / `shimeji_settings.py` (Python mit Tkinter).
+  - Figurenskalierung von **25 % bis 200 %** per Schieberegler oder Prozentfeld; **Speichern** passt alle laufenden Figuren ohne Neustart an (100 % = Originalgröße).
   - Einfacher Figurenwechsel, Bearbeitung des Fensterversatzes in `window.conf`, Fensterfilter in `titles.conf` und Schalter für die Selbstvermehrung.
 - **Mitgelieferte Figuren**:
   - **Ayaka** und **Hatsune Miku**.
@@ -103,7 +104,7 @@ So fügst du eine neue Figur hinzu:
 
 - **`window.conf`**: Anpassungen des Fensterversatzes in der Reihenfolge `x`, `y`, `Breitenzuschlag`, `Höhenzuschlag`.
 - **`titles.conf`**: Filtert Zielfenster anhand ihres Titels. Ein Titel pro Zeile; leer lassen, um alle aktiven Fenster zu verwenden.
-- **`settings.properties`**: Speichert Verhaltenseinstellungen, zum Beispiel `selfCloningEnabled=true|false`.
+- **`settings.properties`**: Speichert Verhaltenseinstellungen, `selfCloningEnabled=true|false` und `scalePercent=25..200` (Standard: `100`).
 
 ---
 
