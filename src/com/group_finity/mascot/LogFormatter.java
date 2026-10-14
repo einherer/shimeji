@@ -8,7 +8,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
 /**
- * ログをフォーマットするクラス.
+ * Klasse zur Formatierung von Protokolleinträgen.
  * @author Yuki
  */
 public class LogFormatter extends SimpleFormatter {
@@ -22,15 +22,15 @@ public class LogFormatter extends SimpleFormatter {
 	private String lineSeparator = System.getProperty("line.separator");
 
 	/**
-	 * Format the given LogRecord.
-	 * @param record the log record to be formatted.
-	 * @return a formatted log record
+	 * Formatiert den angegebenen LogRecord.
+	 * @param record Zu formatierender Protokolleintrag.
+	 * @return Formatierter Protokolleintrag
 	 */
 	@Override
 	public synchronized String format(final LogRecord record) {
 		final StringBuffer sb = new StringBuffer();
 
-		// Minimize memory allocations here.
+		// Speicherzuweisungen hier minimieren.
 		this.dat.setTime(record.getMillis());
 		this.args[0] = this.dat;
 		final StringBuffer text = new StringBuffer();

@@ -12,7 +12,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * IEを持って歩くアクション.
+ * Aktion zum Gehen mit einem IE-Fenster.
  * @author Yuki Yamada
  */
 public class WalkWithIE extends Move {
@@ -37,31 +37,31 @@ public class WalkWithIE extends Move {
 
 		final Area activeIE = getEnvironment().getActiveIE();
 		if (!activeIE.isVisible()) {
-			log.log(Level.INFO, "IEが非表示になった({0},{1})", new Object[]{ getMascot(), this } ); 
+			log.log(Level.INFO, "IE-Fenster wurde ausgeblendet ({0},{1})", new Object[]{ getMascot(), this } );
 			throw new LostGroundException();
 		} 
 
 		final int offsetX = getIEOffsetX();
 		final int offsetY = getIEOffsetY();
 
-		// IE をちゃんと持てているかチェック
+		// Prüfen, ob das IE-Fenster noch gehalten wird
 		if (getMascot().isLookRight()) {
 			if ((getMascot().getAnchor().x - offsetX != activeIE.getLeft())
 					|| (getMascot().getAnchor().y + offsetY != activeIE.getBottom())) {
-				log.log(Level.INFO, "IEから離れた({0},{1})", new Object[]{ getMascot(), this } ); 
+				log.log(Level.INFO, "Kontakt zum IE-Fenster verloren ({0},{1})", new Object[]{ getMascot(), this } );
 				throw new LostGroundException();
 			}
 		} else {
 			if ((getMascot().getAnchor().x + offsetX != activeIE.getRight())
 					|| (getMascot().getAnchor().y + offsetY != activeIE.getBottom())) {
-				log.log(Level.INFO, "IEから離れた({0},{1})", new Object[]{ getMascot(), this } ); 
+				log.log(Level.INFO, "Kontakt zum IE-Fenster verloren ({0},{1})", new Object[]{ getMascot(), this } );
 				throw new LostGroundException();
 			}
 		}
 
 		super.tick();
 
-		// IE を移動
+		// IE-Fenster verschieben
 		if (activeIE.isVisible()) {
 			if (getMascot().isLookRight()) {
 				getEnvironment().moveActiveIE(new Point(getMascot().getAnchor().x - offsetX, getMascot().getAnchor().y

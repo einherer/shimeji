@@ -15,7 +15,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 増殖するアクション.
+ * Aktion zum Vermehren.
  * 
  * @author Yuki Yamada
  */
@@ -45,23 +45,23 @@ public class Breed extends Animate {
 		super.tick();
 
 		if (getTime() == getAnimation().getDuration() - 1) {
-			// 増える
+			// Vermehren
 			breed();
 		}
 	}
 
 	private void breed() throws VariableException {
 		if (!Main.getInstance().isSelfCloningEnabled()) {
-			log.log(Level.INFO, "Self-cloning disabled; skipping breed for {0}", getMascot());
+			log.log(Level.INFO, "Selbstvermehrung deaktiviert; Vermehrung von {0} wird übersprungen", getMascot());
 			return;
 		}
 
-		// マスコットを1個作成
+		// Ein Maskottchen erstellen
 		final Mascot mascot = new Mascot();
 
-		log.log(Level.INFO, "増殖({0},{1},{2})", new Object[] { getMascot(), this, mascot });
+		log.log(Level.INFO, "Vermehrung ({0},{1},{2})", new Object[] { getMascot(), this, mascot });
 
-		// 範囲外から開始
+		// Außerhalb des sichtbaren Bereichs beginnen
 		if (getMascot().isLookRight()) {
 			mascot.setAnchor(new Point(getMascot().getAnchor().x - getBornX(), getMascot().getAnchor().y
 					+ getBornY().intValue()));
@@ -77,10 +77,10 @@ public class Breed extends Animate {
 			getMascot().getManager().add(mascot);
 		
 		} catch (final BehaviorInstantiationException e) {
-			log.log(Level.SEVERE, "生まれた時の行動の初期化に失敗しました", e);
+			log.log(Level.SEVERE, "Verhalten nach der Vermehrung konnte nicht initialisiert werden", e);
 			mascot.dispose();
 		} catch (final CantBeAliveException e) {
-			log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+			log.log(Level.SEVERE, "Maskottchen kann in dieser Situation nicht weiterlaufen", e);
 			mascot.dispose();
 		}
 	}

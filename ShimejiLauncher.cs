@@ -7,7 +7,7 @@ class Program
 {
     static string FindJavaExecutable(string baseDir)
     {
-        // 1. Check embedded / portable JRE inside app directory
+        // 1. Eingebettete oder portable JRE im Programmordner suchen
         string localJreW = Path.Combine(baseDir, "jre", "bin", "javaw.exe");
         if (File.Exists(localJreW)) return localJreW;
         string localJre = Path.Combine(baseDir, "jre", "bin", "java.exe");
@@ -18,7 +18,7 @@ class Program
         string localJava = Path.Combine(baseDir, "java", "bin", "java.exe");
         if (File.Exists(localJava)) return localJava;
 
-        // 2. Check JAVA_HOME
+        // 2. JAVA_HOME prüfen
         string javaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
         if (!string.IsNullOrEmpty(javaHome))
         {
@@ -28,13 +28,13 @@ class Program
             if (File.Exists(path)) return path;
         }
 
-        // 3. Check common Oracle Java path
+        // 3. üblichen Oracle-Java-Pfad prüfen
         string oracleW = @"C:\Program Files\Common Files\Oracle\Java\javapath\javaw.exe";
         if (File.Exists(oracleW)) return oracleW;
         string oracle = @"C:\Program Files\Common Files\Oracle\Java\javapath\java.exe";
         if (File.Exists(oracle)) return oracle;
 
-        // 4. Check PATH environment variable
+        // 4. Umgebungsvariable PATH prüfen
         string pathEnv = Environment.GetEnvironmentVariable("PATH");
         if (!string.IsNullOrEmpty(pathEnv))
         {
@@ -62,14 +62,14 @@ class Program
 
         if (!File.Exists(jarPath))
         {
-            MessageBox.Show("Không tìm thấy file Shimeji.jar trong thư mục:\n" + dir, "Lỗi Shimeji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Shimeji.jar wurde in diesem Ordner nicht gefunden:\n" + dir, "Shimeji-Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
         string javaExe = FindJavaExecutable(dir);
         if (string.IsNullOrEmpty(javaExe))
         {
-            MessageBox.Show("Không tìm thấy Java (JRE/JDK) trên máy tính!\nVui lòng tải Java 8 hoặc cao hơn (hoặc giải nén thư mục jre vào thư mục ứng dụng).", "Thiếu Java Runtime", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Java (JRE/JDK) wurde nicht gefunden!\nBitte Java 8 oder neuer installieren oder einen jre-Ordner in den Programmordner entpacken.", "Java-Laufzeitumgebung fehlt", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -86,7 +86,7 @@ class Program
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Lỗi khi khởi chạy Shimeji: " + ex.Message, "Lỗi Shimeji Launcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Fehler beim Starten von Shimeji: " + ex.Message, "Fehler beim Shimeji-Start", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

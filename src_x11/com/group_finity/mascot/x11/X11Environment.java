@@ -23,50 +23,50 @@ class X11Environment extends Environment {
 	private static final Logger log = Logger.getLogger(X11Environment.class.getName());
 	private static final Set<Integer> loggedWindowIds = new HashSet<Integer>();
 	
-// The X display. See X.java 
+// X-Anzeige. Siehe X.java
 	private Display display = new Display(); 
 
-// Hashtable for storing the active windows
+// Hashtable zum Speichern der aktiven Fenster
 	public WindowContainer IE = new WindowContainer();
 
-// Randomly chosen window for jump action targeting
+// Zufällig ausgewähltes Zielfenster für Sprünge
 	public Area activeIE = new Area();
 
-// Current screen, never changes after initial assignment
-// Environment.java and ComplexArea.java handle detection 
-// and dual monitor behavior
+// Aktueller Bildschirm; bleibt nach der ersten Zuweisung unverändert
+// Environment.java und ComplexArea.java übernehmen die Erkennung
+// und das Verhalten bei zwei Monitoren.
 	public static final Area workArea = new Area();
 
 	private boolean checkTitles = true;
 	private boolean newRandom, updateOnNext = false;
 
-// Counter variable used for stuff we want less 
-// frequently than each tick. Initialize at 400 to
-// force an early activeIE selection.
+// Zählvariable für Vorgänge, die seltener als
+// bei jedem Tick stattfinden sollen. Mit 400 initialisieren, um
+// frühzeitig eine activeIE-Auswahl auszulösen.
 	private int q = 400;
 	private int z = 0;
 	private Number markedForDeletion;
 
-// Variables for configuration options
+// Variablen für Konfigurationsoptionen
 	private int xoffset,yoffset,wmod,hmod = 0;
 	private ArrayList<String> titles = new ArrayList<String>();
 
 
-// Random number generator for choosing a window for jump actions
+// Zufallszahlengenerator zur Auswahl eines Zielfensters für Sprünge
 	private Random RNG = new Random();
 
-// Storage for Window ID's, only used for comparison when removing 
-// user-terminated windows
+// Speicher für Fenster-IDs; dient nur zum Vergleich beim Entfernen
+// vom Nutzer geschlossener Fenster
 	private ArrayList<Number> curActiveWin = new ArrayList<Number>();
 	private ArrayList<Number> curVisibleWin = new ArrayList<Number>();
 
-// Storage for values of certain state/type atoms on the current display
+// Speicher für Werte bestimmter Zustands- und Typatome der aktuellen Anzeige
 	private ArrayList<Number> badStateList = new ArrayList<Number>();
 	private ArrayList<Number> badTypeList = new ArrayList<Number>();
 	private int minimizedValue;
 	private int dockValue;
 		
-// init() - set work area and read configuration files	
+// init() – Arbeitsbereich festlegen und Konfigurationsdateien lesen
 	X11Environment() {
 		workArea.set(getWorkAreaRect());
 		badStateList.add(Integer.decode(display.getAtom("_NET_WM_STATE_MODAL").toString()));
@@ -116,12 +116,12 @@ class X11Environment extends Environment {
 	}
 	
 
-// tick() - executed every x milliseconds, defined in Manager.java
+// tick() – Wird alle x Millisekunden ausgeführt; Intervall in Manager.java definiert
 	@Override
 	public void tick() {
 		super.tick();
 		if (q%5==0 || updateOnNext) update();
-	// New jump action target window every 1000 ticks
+	// Alle 1000 Ticks ein neues Zielfenster für Sprünge wählen
 		if (q == 1000) {
 			getRandomIE();
 			q = 0;
@@ -129,7 +129,7 @@ class X11Environment extends Environment {
 		q++;
 	}
 
-// update() - window handling, executed each tick
+// update() – Fensterverwaltung; wird bei jedem Tick ausgeführt
 	private void update() {
 		Window[] allWindows = null;
 		Window ie = null;
@@ -141,16 +141,16 @@ class X11Environment extends Environment {
 		if (display == null) return;
 		updateOnNext = false;
 		try {
-		// Retrieve all windows from the X Display
+		// Alle Fenster der X-Anzeige abrufen
 			allWindows = display.getWindows();
 			curDesktop = display.getActiveDesktopNumber();
 			uguu:	
 				for (int i=0;i<allWindows.length;i++) {
-				// Break for-loop if the window title does not match config.
+				// Schleife abbrechen, wenn der Fenstertitel nicht zur Konfiguration passt.
 					if (checkTitles) {
 						if (!isIE(allWindows[i].getTitle())) continue uguu;
 					}
-				// Get window attributes.
+				// Fensterattribute abrufen.
 					id = allWindows[i].getID();
 					Rectangle frameBounds = allWindows[i].getBounds();
 					Window.Geometry geometry = allWindows[i].getGeometry();
@@ -161,7 +161,7 @@ class X11Environment extends Environment {
 					if (!loggedWindowIds.contains(id)) {
 						loggedWindowIds.add(id);
 						log.log(Level.INFO,
-							"Window debug id={0} title={1} geometry=({2},{3},{4},{5}) frameBounds=({6},{7},{8},{9}) final=({10},{11},{12},{13})",
+							"Fensterdiagnose ID={0} Titel={1} Geometrie=({2},{3},{4},{5}) Rahmen=({6},{7},{8},{9}) Ergebnis=({10},{11},{12},{13})",
 							new Object[] { id, allWindows[i].getTitle(), geometry.x, geometry.y, geometry.width, geometry.height,
 								frameBounds.x, frameBounds.y, frameBounds.width, frameBounds.height,
 								x, y, w, h });
@@ -205,7 +205,7 @@ class X11Environment extends Environment {
 					}
 				}
 		} catch (X11Exception e) {}
-	// Remove user-terminated windows from the container every 5th tick
+	// Vom Nutzer geschlossene Fenster bei jedem fünften Tick aus dem Container entfernen
 		Iterator<Number> keys = IE.keySet().iterator();
 		while (keys.hasNext()) {
 			Number i = keys.next();
@@ -244,8 +244,8 @@ class X11Environment extends Environment {
 		return r1;
 	}
 
-// getRandomIE() - assign a new randomly selected activeIE
-// for jump action targeting.
+// getRandomIE() – Neues, zufällig ausgewähltes activeIE-Fenster zuweisen
+// als Ziel für Sprungaktionen.
 	private void getRandomIE() {
 		ArrayList<Area> visibleWin = new ArrayList<Area>();
 		if (curVisibleWin == null) return;

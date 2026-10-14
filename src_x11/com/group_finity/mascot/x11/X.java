@@ -1,14 +1,14 @@
 /* Copyright (c) 2008 Stefan Endrullis, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Diese Bibliothek ist freie Software; Sie dürfen sie weitergeben und/oder
+ * unter den Bedingungen der GNU Lesser General Public
+ * License, wie von der Free Software Foundation veröffentlicht, entweder
+ * Version 2.1 der Lizenz oder nach Ihrer Wahl einer späteren Version.
  * <p/>
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * Diese Bibliothek wird in der Hoffnung verteilt, dass sie nützlich ist,
+ * jedoch OHNE JEGLICHE GEWÄHRLEISTUNG, auch ohne die stillschweigende Gewährleistung der
+ * MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Die GNU
+ * Weitere Einzelheiten enthält die GNU Lesser General Public License.
  */
 package jnacontrib.x11.api;
 
@@ -29,22 +29,22 @@ import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.unix.X11.Atom;
 
 /**
- * Object oriented X window system.
+ * Objektorientiertes X-Fenstersystem.
  * <p/>
- * Some code segments in this class are based on the code of the program
- * wmctrl (licensed under GPLv2) written by Tomas Styblo &lt;tripie@cpan.org&gt;.
- * Thanks a lot, Tomas!
+ * Einige Codeabschnitte dieser Klasse basieren auf dem Programm
+ * wmctrl von Tomas Styblo &lt;tripie@cpan.org&gt; (unter GPLv2 lizenziert).
+ * Vielen Dank, Tomas!
  *
  * @author Stefan Endrullis
  */
 public class X {
-    /** Remove/unset property. */
+    /** Eigenschaft entfernen oder zurücksetzen. */
     public static final int _NET_WM_STATE_REMOVE = 0;
-    /** Add/set property. */
+    /** Eigenschaft hinzufügen oder setzen. */
     public static final int _NET_WM_STATE_ADD = 1;
-    /** Toggle property. */
+    /** Eigenschaft umschalten. */
     public static final int _NET_WM_STATE_TOGGLE = 2;
-    /** Maximal property value length. */
+    /** Maximale Länge eines Eigenschaftswerts. */
     public static final int MAX_PROPERTY_VALUE_LEN = 4096;
 
     private static final X11 x11 = X11.INSTANCE;
@@ -65,11 +65,11 @@ public class X {
 
 
     /**
-     * X Display.
+     * X-Anzeige.
      */
     public static class Display {
         /**
-         * Open display.
+         * Anzeige Öffnen.
          */
         private X11.Display x11Display;
         /**
@@ -78,26 +78,26 @@ public class X {
         private HashMap<String, Atom> atomsHash = new HashMap<String, Atom>();
 
         /**
-         * Creates the OOWindowUtils using the default display.
+         * Erstellt OOWindowUtils mit der Standardanzeige.
          */
         public Display() {
             x11Display = x11.XOpenDisplay(null);
 
             if (x11Display == null) {
-                throw new Error("Can't open X Display");
+                throw new Error("X-Anzeige kann nicht geöffnet werden");
             }
         }
 
         /**
-         * Creates the OOWindowUtils using a given display.
+         * Erstellt OOWindowUtils mit der angegebenen Anzeige.
          *
-         * @param x11Display open display
+         * @param x11Display Geöffnete Anzeige
          */
         public Display(X11.Display x11Display) {
             this.x11Display = x11Display;
 
             if (x11Display == null) {
-                throw new Error("X Display is null");
+                throw new Error("X-Anzeige ist null");
             }
         }
 
@@ -122,33 +122,33 @@ public class X {
 		}
 
         /**
-         * Closes the display.
+         * Schließt die Anzeige.
          */
         public void close() {
             x11.XCloseDisplay(x11Display);
         }
 
         /**
-         * Flushes the output buffer / event queue.
+         * Leert den Ausgabepuffer und die Ereigniswarteschlange.
          */
         public void flush() {
             x11.XFlush(x11Display);
         }
 
         /**
-         * Returns the X11 display.
+         * Gibt die X11-Anzeige zurück.
          *
-         * @return X11 display
+         * @return X11-Anzeige
          */
         public X11.Display getX11Display() {
             return x11Display;
         }
 
         /**
-         * Get internal atoms by name.
+         * Interne Atome anhand ihres Namens abrufen.
          *
-         * @param name name of the atom
-         * @return atom
+         * @param name Name des Atoms
+         * @return Atom
          */
         public X11.Atom getAtom(String name) {
             X11.Atom atom = atomsHash.get(name);
@@ -160,9 +160,9 @@ public class X {
         }
 
         /**
-         * Returns the window manager information as an window.
+         * Gibt Informationen zum Fenstermanager als Fenster zurück.
          *
-         * @return window manager information as an window
+         * @return Informationen zum Fenstermanager als Fenster
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getWindowManagerInfo() throws X11Exception {
@@ -174,24 +174,24 @@ public class X {
                 try {
                     return rootWindow.getWindowProperty(X11.XA_CARDINAL, "_WIN_SUPPORTING_WM_CHECK");
                 } catch (X11Exception e1) {
-                    throw new X11Exception("Cannot get window manager info properties. (_NET_SUPPORTING_WM_CHECK or _WIN_SUPPORTING_WM_CHECK)");
+                    throw new X11Exception("Informationen zum Fenstermanager können nicht abgerufen werden (_NET_SUPPORTING_WM_CHECK oder _WIN_SUPPORTING_WM_CHECK)");
                 }
             }
         }
 
         /**
-         * Returns the root window.
+         * Gibt das Wurzelfenster zurück.
          *
-         * @return root window
+         * @return Wurzelfenster
          */
         public Window getRootWindow() {
             return new Window(this, x11.XDefaultRootWindow(x11Display));
         }
 
         /**
-         * Returns the current active window.
+         * Gibt das aktuell aktive Fenster zurück.
          *
-         * @return current active window
+         * @return Aktuell aktives Fenster
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getActiveWindow() throws X11Exception {
@@ -199,9 +199,9 @@ public class X {
         }
 
         /**
-         * Returns all windows managed by the window manager.
+         * Gibt alle vom Fenstermanager verwalteten Fenster zurück.
          *
-         * @return all windows managed by the window manager
+         * @return Alle vom Fenstermanager verwalteten Fenster
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window[] getWindows() throws X11Exception {
@@ -214,7 +214,7 @@ public class X {
                 try {
                     bytes = rootWindow.getProperty(X11.XA_CARDINAL, "_WIN_CLIENT_LIST");
                 } catch (X11Exception e1) {
-                    throw new X11Exception("Cannot get client list properties (_NET_CLIENT_LIST or _WIN_CLIENT_LIST)");
+                    throw new X11Exception("Fensterliste kann nicht abgerufen werden (_NET_CLIENT_LIST oder _WIN_CLIENT_LIST)");
                 }
             }
 
@@ -228,9 +228,9 @@ public class X {
         }
 
         /**
-         * Returns the number of desktops.
+         * Gibt die Anzahl der Arbeitsflächen zurück.
          *
-         * @return number of desktops
+         * @return Anzahl der Arbeitsflächen
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getDesktopCount() throws X11Exception {
@@ -242,15 +242,15 @@ public class X {
                 try {
                     return root.getIntProperty(X11.XA_CARDINAL, "_WIN_WORKSPACE_COUNT");
                 } catch (X11Exception e1) {
-                    throw new X11Exception("Cannot get number of desktops properties (_NET_NUMBER_OF_DESKTOPS or _WIN_WORKSPACE_COUNT)");
+                    throw new X11Exception("Anzahl der Arbeitsflächen kann nicht abgerufen werden (_NET_NUMBER_OF_DESKTOPS oder _WIN_WORKSPACE_COUNT)");
                 }
             }
         }
 
         /**
-         * Returns the number of the active desktop.
+         * Gibt die Nummer der aktiven Arbeitsfläche zurück.
          *
-         * @return number of the active desktop
+         * @return Nummer der aktiven Arbeitsfläche
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getActiveDesktopNumber() throws X11Exception {
@@ -263,7 +263,7 @@ public class X {
                 try {
                     cur_desktop = root.getIntProperty(X11.XA_CARDINAL, "_WIN_WORKSPACE");
                 } catch (X11Exception e1) {
-                    throw new X11Exception("Cannot get current desktop properties (_NET_CURRENT_DESKTOP or _WIN_WORKSPACE property)");
+                    throw new X11Exception("Aktuelle Arbeitsfläche kann nicht abgerufen werden (_NET_CURRENT_DESKTOP oder _WIN_WORKSPACE)");
                 }
             }
 
@@ -271,9 +271,9 @@ public class X {
         }
 
         /**
-         * Returns the available desktops.
+         * Gibt die verfügbaren Arbeitsflächen zurück.
          *
-         * @return available desktops
+         * @return Verfügbare Arbeitsflächen
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Desktop[] getDesktops() throws X11Exception {
@@ -285,7 +285,7 @@ public class X {
                 try {
                     desktopNames = root.getStringListProperty(X11.XA_STRING, "_WIN_WORKSPACE_NAMES");
                 } catch (X11Exception e1) {
-                    throw new X11Exception("Cannot get desktop names properties (_NET_DESKTOP_NAMES or _WIN_WORKSPACE_NAMES)");
+                    throw new X11Exception("Namen der Arbeitsflächen können nicht abgerufen werden (_NET_DESKTOP_NAMES oder _WIN_WORKSPACE_NAMES)");
                 }
             }
 
@@ -298,9 +298,9 @@ public class X {
         }
 
         /**
-         * Switches to the given desktop.
+         * Wechselt zur angegebenen Arbeitsfläche.
          *
-         * @param nr desktop number
+         * @param nr Nummer der Arbeitsfläche
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public void switchDesktop(int nr) throws X11Exception {
@@ -308,9 +308,9 @@ public class X {
         }
 
         /**
-         * Sets the "showing the desktop" state.
+         * Legt fest, ob die Arbeitsfläche angezeigt wird.
          *
-         * @param state true if the desktop should be shown
+         * @param state true, wenn die Arbeitsfläche angezeigt werden soll
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public void showingDesktop(boolean state) throws X11Exception {
@@ -318,9 +318,9 @@ public class X {
         }
 
         /**
-         * Enables / disables the auto-repeat of pressed keys.
+         * Aktiviert oder deaktiviert die automatische Wiederholung gedrückter Tasten.
          *
-         * @param on true if auto-repeat shall be enabled
+         * @param on true, wenn die automatische Tastenwiederholung aktiviert werden soll
          */
         public void setKeyAutoRepeat(boolean on) {
            if (on) {
@@ -331,71 +331,71 @@ public class X {
         }
 
         /**
-         * Returns the key symbol corresponding to the the key name.
+         * Gibt das zum Tastennamen gehörende Tastensymbol zurück.
          *
-         * @param keyName name of the key
-         * @return key symbol
+         * @param keyName Name der Taste
+         * @return Tastensymbol
          */
         public X11.KeySym getKeySym(String keyName) {
             return x11.XStringToKeysym(keyName);
         }
 
         /**
-         * Returns the key symbol corresponding to the keycode.
+         * Gibt das zum Tastencode gehörende Tastensymbol zurück.
          *
-         * @param keyCode keycode
-         * @param index element of the keycode vector
-         * @return key symbol
+         * @param keyCode Tastencode
+         * @param index Element des Tastencode-Vektors
+         * @return Tastensymbol
          */
         public X11.KeySym getKeySym(byte keyCode, int index) {
             return x11.XKeycodeToKeysym(x11Display, keyCode, index);
         }
 
         /**
-         * Returns the keycode corresponding to the key symbol.
+         * Gibt den zum Tastensymbol gehörenden Tastencode zurück.
          *
-         * @param keySym key symbol
-         * @return keycode
+         * @param keySym Tastensymbol
+         * @return Tastencode
          */
         public byte getKeyCode(X11.KeySym keySym) {
             return x11.XKeysymToKeycode(x11Display,  keySym);
         }
 
         /**
-         * Returns the keycode corresponding to the key name.
+         * Gibt den zum Tastennamen gehörenden Tastencode zurück.
          *
-         * @param keyName name of the key
-         * @return keycode
+         * @param keyName Name der Taste
+         * @return Tastencode
          */
         public byte getKeyCode(String keyName) {
             return x11.XKeysymToKeycode(x11Display,  getKeySym(keyName));
         }
 
         /**
-         * Returns the key name corresponding to the key symbol.
+         * Gibt den zum Tastensymbol gehörenden Tastennamen zurück.
          *
-         * @param keySym key symbol
-         * @return name of the key
+         * @param keySym Tastensymbol
+         * @return Name der Taste
          */
         public String getKeyName(X11.KeySym keySym) {
             return x11.XKeysymToString(keySym);
         }
 
         /**
-         * Returns the key name corresponding to the keycode and the index in the keycode vector.
+         * Gibt den zum Tastencode und zum Index im Tastencode-Vektor gehörenden Tastennamen zurück.
          *
-         * @param keyCode keycode
-         * @param index index in the keycode vector
-         * @return name of the key
+         * @param keyCode Tastencode
+         * @param index Index im Tastencode-Vektor
+         * @return Name der Taste
          */
         public String getKeyName(byte keyCode, int index) {
             return getKeyName(getKeySym(keyCode, index));
         }
 
         /**
-         * Returns the modifier keymap.
+         * Gibt die Belegung der Modifikatortasten zurück.
          *
-         * @return modifier keymap
+         * @return Belegung der Modifikatortasten
          */
         public ModifierKeymap getModifierKeymap() {
             X11.XModifierKeymapRef xModifierKeymapRef = x11.XGetModifierMapping(x11Display);
@@ -405,9 +405,9 @@ public class X {
         }
 
         /**
-         * Sets the modifier keymap.
+         * Legt die Belegung der Modifikatortasten fest.
          *
-         * @param modifierKeymap modifier keymap
+         * @param modifierKeymap Belegung der Modifikatortasten
          */
         public void setModifierKeymap(ModifierKeymap modifierKeymap) {
             X11.XModifierKeymapRef xModifierKeymapRef = modifierKeymap.toXModifierKeyamp();
@@ -417,38 +417,38 @@ public class X {
 
 
     /**
-     * Modifier keymap. The lists shift, lock, control, mod1, mod1, mod1, mod1, mod1
-     * contain the keycodes as Byte objects. You can directly access these lists to
-     * read, replace, remove or insert new keycodes to these modifiers.
-     * To apply a new modifier keymap call
+     * Modifikatortastenbelegung. Die Listen shift, lock, control, mod1, mod2, mod3, mod4, mod5
+     * enthalten die Tastencodes als Byte-Objekte. Die Listen können direkt verwendet werden, um
+     * Tastencodes dieser Modifikatoren zu lesen, zu ersetzen, zu entfernen oder einzufügen.
+     * Zum Anwenden einer neuen Modifikatortastenbelegung
      * {@link X.Display#setModifierKeymap(ModifierKeymap)}.
      */
     public static class ModifierKeymap {
-        /** Shift modifier as an ArrayList&lt;Byte&gt;. */
+        /** Shift-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> shift = new ArrayList<Byte>(4);
-        /** Lock modifier as an ArrayList&lt;Byte&gt;. */
+        /** Lock-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> lock = new ArrayList<Byte>(4);
-        /** Control modifier as an ArrayList&lt;Byte&gt;. */
+        /** Control-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> control = new ArrayList<Byte>(4);
-        /** Mod1 modifier as an ArrayList&lt;Byte&gt;. */
+        /** Mod1-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> mod1 = new ArrayList<Byte>(4);
-        /** Mod2 modifier as an ArrayList&lt;Byte&gt;. */
+        /** Mod2-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> mod2 = new ArrayList<Byte>(4);
-        /** Mod3 modifier as an ArrayList&lt;Byte&gt;. */
+        /** Mod3-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> mod3 = new ArrayList<Byte>(4);
-        /** Mod4 modifier as an ArrayList&lt;Byte&gt;. */
+        /** Mod4-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> mod4 = new ArrayList<Byte>(4);
-        /** Mod5 modifier as an ArrayList&lt;Byte&gt;. */
+        /** Mod5-Modifikator als ArrayList&lt;Byte&gt;. */
         public ArrayList<Byte> mod5 = new ArrayList<Byte>(4);
 
         /**
-         * Creates an empty modifier keymap.
+         * Erstellt eine leere Modifikatortastenbelegung.
          */
         public ModifierKeymap() {
         }
 
         /**
-         * Creates a modifier keymap and reads the modifiers from the XModifierKeymap.
+         * Erstellt eine Modifikatortastenbelegung und liest die Modifikatoren aus der XModifierKeymap.
          *
          * @param xModifierKeymapRef XModifierKeymap
          */
@@ -457,7 +457,7 @@ public class X {
         }
 
         /**
-         * Reads all modifiers from the XModifierKeymap.
+         * Liest alle Modifikatoren aus der XModifierKeymap.
          *
          * @param xModifierKeymapRef XModifierKeymap
          */
@@ -481,14 +481,14 @@ public class X {
         }
 
         /**
-         * Returns an XModifierKeymap corresponding to this object.
+         * Gibt eine zu diesem Objekt passende XModifierKeymap zurück.
          *
          * @return XModifierKeymap
          */
         public X11.XModifierKeymapRef toXModifierKeyamp() {
             ArrayList<Byte>[] allModifiers = getAllModifiers();
 
-            // determine max list size
+            // Maximale Listengröße ermitteln
             int count = 0;
             for (int i = 0; i < allModifiers.length; i++) {
                 count = Math.max(count, allModifiers[i].size());
@@ -512,9 +512,9 @@ public class X {
         }
 
         /**
-         * Returns all modifiers as an array.
+         * Gibt alle Modifikatoren als Array zurück.
          *
-         * @return array of modifier lists
+         * @return Array der Modifikatorlisten
          */
         public ArrayList<Byte>[] getAllModifiers() {        	
             return new ArrayList[] {
@@ -524,7 +524,7 @@ public class X {
     }
 
     /**
-     * X Desktop.
+     * X-Arbeitsfläche.
      */
     public static class Desktop {
         public X.Display display;
@@ -540,35 +540,35 @@ public class X {
 
 
     /**
-     * X Window.
+     * X-Fenster.
      */
     public static class Window {
         private X.Display display;
         private X11.Window x11Window;
 
         /**
-         * Returns the X11 window object.
+         * Gibt das X11-Fensterobjekt zurück.
          *
-         * @return X11 window
+         * @return X11-Fenster
          */
         public X11.Window getX11Window() {
             return x11Window;
         }
 
         /**
-         * Returns the ID of the window.
+         * Gibt die ID des Fensters zurück.
          *
-         * @return window ID
+         * @return Fenster-ID
          */
         public int getID() {
             return x11Window.intValue();
         }
 
         /**
-         * Creates the window.
+         * Erstellt das Fenster.
          *
-         * @param display   display where the window is allocated
-         * @param x11Window X11 window
+         * @param display Anzeige, der das Fenster zugeordnet ist
+         * @param x11Window X11-Fenster
          */
         public Window(X.Display display, X11.Window x11Window) {
             this.display = display;
@@ -576,9 +576,9 @@ public class X {
         }
 
         /**
-         * Returns the title of the window.
+         * Gibt den Fenstertitel zurück.
          *
-         * @return title of the window
+         * @return Fenstertitel
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getTitle() throws X11Exception {
@@ -599,9 +599,9 @@ public class X {
 		}
 
 		/**
-		 * Returns the window type.
+		 * Gibt den Fenstertyp zurück.
 		 * 
-		 * @return window type atoms
+		 * @return Atome des Fenstertyps
 		 * @throws X11Exception thrown if X11 window errors occured
 		 *
 		 * 
@@ -615,9 +615,9 @@ public class X {
 		}
 
         /**
-         * Returns the window class.
+         * Gibt die Fensterklasse zurück.
          *
-         * @return window class
+         * @return Fensterklasse
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getWindowClass() throws X11Exception {
@@ -625,9 +625,9 @@ public class X {
         }
 
         /**
-         * Returns the PID of the window.
+         * Gibt die Prozess-ID des Fensters zurück.
          *
-         * @return PID of the window
+         * @return Prozess-ID des Fensters
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getPID() throws X11Exception {
@@ -635,9 +635,9 @@ public class X {
         }
 
         /**
-         * Returns the desktop ID of the window.
+         * Gibt die Arbeitsflächen-ID des Fensters zurück.
          *
-         * @return desktop ID of the window
+         * @return Arbeitsflächen-ID des Fensters
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getDesktop() throws X11Exception {
@@ -649,9 +649,9 @@ public class X {
         }
 
         /**
-         * Returns the client machine name of the window.
+         * Gibt den Rechnernamen des Fenster-Clients zurück.
          *
-         * @return client machine name of the window
+         * @return Rechnername des Fenster-Clients
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getMachine() throws X11Exception {
@@ -659,9 +659,9 @@ public class X {
         }
         
         /**
-         * Returns the XWindowAttributes of the window.
+         * Gibt die XWindowAttributes des Fensters zurück.
          *
-         * @return XWindowAttributes of the window
+         * @return XWindowAttributes des Fensters
          */
         public X11.XWindowAttributes getXWindowAttributes() {
             X11.XWindowAttributes xwa = new X11.XWindowAttributes();
@@ -671,9 +671,9 @@ public class X {
         }
 
         /**
-         * Returns the geometry of the window.
+         * Gibt die Geometrie des Fensters zurück.
          *
-         * @return geometry of the window
+         * @return Geometrie des Fensters
          */
         public Geometry getGeometry() {
             X11.WindowByReference junkRoot = new X11.WindowByReference();
@@ -696,9 +696,9 @@ public class X {
         }
 
         /**
-         * Returns the bounding box of the window.
+         * Gibt den Begrenzungsrahmen des Fensters zurück.
          *
-         * @return bounding box of the window
+         * @return Begrenzungsrahmen des Fensters
          */
         public Rectangle getBounds() {
             X11.WindowByReference junkRoot = new X11.WindowByReference();
@@ -733,7 +733,7 @@ public class X {
                     bottom = bytesToInt(extents, 12);
                 }
             } catch (X11Exception e) {
-                // Fall back to the client geometry when the WM does not expose frame extents.
+                // Auf die Client-Geometrie zurückgreifen, wenn der Fenstermanager keine Rahmenmaße liefert.
             }
 
             return new Rectangle(
@@ -745,7 +745,7 @@ public class X {
         }
 
         /**
-         * Activates the window.
+         * Aktiviert das Fenster.
          *
          * @throws X11Exception thrown if X11 window errors occurred
          */
@@ -755,10 +755,10 @@ public class X {
         }
 
         /**
-         * Moves the window to the specified desktop.
+         * Verschiebt das Fenster auf die angegebene Arbeitsfläche.
          *
-         * @param desktopNr desktop
-         * @return X11.SUCCESS if closing was successful
+         * @param desktopNr Arbeitsfläche
+         * @return X11.SUCCESS, wenn das Schließen erfolgreich war
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int moveToDesktop(int desktopNr) throws X11Exception {
@@ -766,9 +766,9 @@ public class X {
         }
 
         /**
-         * Selects the input events to listen for.
+         * Wählt die zu überwachenden Eingabeereignisse aus.
          *
-         * @param eventMask event mask representing the events to listen for
+         * @param eventMask Ereignismaske für die zu überwachenden Ereignisse
          */
         public void selectInput(int eventMask) {
             x11.XSelectInput(display.x11Display, x11Window, new NativeLong(eventMask));
@@ -783,9 +783,9 @@ public class X {
         }
 
         /**
-         * Closes the window gracefully.
+         * Schließt das Fenster ordnungsgemäß.
          *
-         * @return X11.SUCCESS if closing was successful
+         * @return X11.SUCCESS, wenn das Schließen erfolgreich war
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int close() throws X11Exception {
@@ -793,11 +793,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as integer.
+         * Gibt den Eigenschaftswert als Ganzzahl zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as integer
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Ganzzahl
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getIntProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -805,11 +805,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as integer.
+         * Gibt den Eigenschaftswert als Ganzzahl zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as integer
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Ganzzahl
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public int getIntProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -817,11 +817,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as window.
+         * Gibt den Eigenschaftswert als Fenster zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as window
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Fenster
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getWindowProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -831,11 +831,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as window.
+         * Gibt den Eigenschaftswert als Fenster zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as window
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Fenster
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getWindowProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -843,18 +843,18 @@ public class X {
         }
 
         /**
-         * Returns the property value as a null terminated byte array.
+         * Gibt den Eigenschaftswert als nullterminiertes Byte-Array zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as a null terminated byte array
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als nullterminiertes Byte-Array
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullTerminatedProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytesOrig = getProperty(xa_prop_type, xa_prop_name);
             byte[] bytesDest;
 
-            // search for '\0'
+            // Nach '\0' suchen
             int i;
             for (i = 0; i < bytesOrig.length; i++) {
                 if (bytesOrig[i] == '\0') break;
@@ -871,11 +871,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as a null terminated byte array.
+         * Gibt den Eigenschaftswert als nullterminiertes Byte-Array zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as a null terminated byte array
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als nullterminiertes Byte-Array
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullTerminatedProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -883,17 +883,17 @@ public class X {
         }
 
         /**
-         * Returns the property value as byte array where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als Byte-Array zurück, in dem jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as byte array where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Byte-Array, in dem jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullReplacedStringProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytes = getProperty(xa_prop_type, xa_prop_name);
 
-            // search for '\0'
+            // Nach '\0' suchen
             int i;
             for (i = 0; i < bytes.length; i++) {
                 if (bytes[i] == '\0') {
@@ -905,11 +905,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as byte array where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als Byte-Array zurück, in dem jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as byte array where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Byte-Array, in dem jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullReplacedStringProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -917,11 +917,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as string where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als Zeichenkette zurück, in der jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as string where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Zeichenkette, in der jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getStringProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -929,11 +929,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as string where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als Zeichenkette zurück, in der jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as string where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Zeichenkette, in der jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getStringProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -941,11 +941,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as string list.
+         * Gibt den Eigenschaftswert als Zeichenkettenliste zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as string list
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Zeichenkettenliste
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getStringListProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -953,11 +953,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as string list.
+         * Gibt den Eigenschaftswert als Zeichenkettenliste zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as string list
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Zeichenkettenliste
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getStringListProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -965,11 +965,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as UTF8 string where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als UTF-8-Zeichenkette zurück, in der jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as UTF8 string where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als UTF-8-Zeichenkette, in der jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getUtf8Property(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -981,11 +981,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as UTF8 string where every '\0' character is replaced by '.'.
+         * Gibt den Eigenschaftswert als UTF-8-Zeichenkette zurück, in der jedes '\0' durch '.' ersetzt wird.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as UTF8 string where every '\0' character is replaced by '.'
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als UTF-8-Zeichenkette, in der jedes '\0' durch '.' ersetzt wird
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String getUtf8Property(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -993,11 +993,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as UTF8 string list
+         * Gibt den Eigenschaftswert als UTF-8-Zeichenkettenliste zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as UTF8 string list
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als UTF-8-Zeichenkettenliste
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getUtf8ListProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -1009,11 +1009,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as UTF8 string list
+         * Gibt den Eigenschaftswert als UTF-8-Zeichenkettenliste zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as UTF8 string list
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als UTF-8-Zeichenkettenliste
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getUtf8ListProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -1021,11 +1021,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as a byte array.
+         * Gibt den Eigenschaftswert als Byte-Array zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as a byte array
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Byte-Array
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
@@ -1038,16 +1038,16 @@ public class X {
             NativeLong long_offset = new NativeLong(0);
             NativeLong long_length = new NativeLong(MAX_PROPERTY_VALUE_LEN / 4);
 
-            /* MAX_PROPERTY_VALUE_LEN / 4 explanation (XGetWindowProperty manpage):
+            /* Erläuterung zu MAX_PROPERTY_VALUE_LEN / 4 aus der Handbuchseite zu XGetWindowProperty:
                                     *
-                                    * long_length = Specifies the length in 32-bit multiples of the
-                                    *               data to be retrieved.
+                                    * long_length = Gibt die Länge der in Vielfachen von 32 Bit
+                                    *               abzurufenden Daten an.
                                     */
             if (x11.XGetWindowProperty(display.x11Display, x11Window, xa_prop_name, long_offset, long_length, false,
                 xa_prop_type, xa_ret_type_ref, ret_format_ref,
                 ret_nitems_ref, ret_bytes_after_ref, ret_prop_ref) != X11.Success) {
                 String prop_name = x11.XGetAtomName(display.x11Display, xa_prop_name);
-                throw new X11Exception("Cannot get " + prop_name + " property.");
+                throw new X11Exception("Abrufen fehlgeschlagen: " + prop_name + " (Eigenschaft).");
             }
 
             X11.Atom xa_ret_type = xa_ret_type_ref.getValue();
@@ -1057,13 +1057,13 @@ public class X {
                 !xa_ret_type.toNative().equals(xa_prop_type.toNative())) {
                 x11.XFree(ret_prop);
                 String prop_name = x11.XGetAtomName(display.x11Display, xa_prop_name);
-                throw new X11Exception("Invalid type of " + prop_name + " property");
+                throw new X11Exception("Ungültiger Typ für " + prop_name + " (Eigenschaft)");
             }
 
             int ret_format = ret_format_ref.getValue();
             long ret_nitems = ret_nitems_ref.getValue().longValue();
 
-            // null terminate the result to make string handling easier
+            // Ergebnis nullterminieren, um die Verarbeitung als Zeichenkette zu erleichtern
             int nbytes;
             if (ret_format == 32)
                 nbytes = Native.LONG_SIZE;
@@ -1074,7 +1074,7 @@ public class X {
             else if (ret_format == 0)
                 nbytes = 0;
             else
-                throw new X11Exception("Invalid return format");
+                throw new X11Exception("Ungültiges Rückgabeformat");
             int length = Math.min((int) ret_nitems * nbytes, MAX_PROPERTY_VALUE_LEN);
 
             byte[] ret = ret_prop.getByteArray(0, length);
@@ -1084,11 +1084,11 @@ public class X {
         }
 
         /**
-         * Returns the property value as a byte array.
+         * Gibt den Eigenschaftswert als Byte-Array zurück.
          *
-         * @param xa_prop_type property type
-         * @param xa_prop_name property name
-         * @return property value as a byte array
+         * @param xa_prop_type Typ der Eigenschaft
+         * @param xa_prop_name Name der Eigenschaft
+         * @return Eigenschaftswert als Byte-Array
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
@@ -1130,7 +1130,7 @@ public class X {
             if (x11.XSendEvent(display.x11Display, display.getRootWindow().x11Window, 0, mask, e) != 0) {
                 return X11.Success;
             } else {
-                throw new X11Exception("Cannot send " + msg + " event.");
+                throw new X11Exception("Senden fehlgeschlagen: " + msg + " (Ereignis).");
             }
         }
 
@@ -1153,7 +1153,7 @@ public class X {
     }
 
     /**
-     * General exception which is thrown when an X11 window error occurred.
+     * Allgemeine Ausnahme bei einem X11-Fensterfehler.
      */
     public static class X11Exception extends Exception {
 		private static final long serialVersionUID = 1L;

@@ -5,27 +5,27 @@ import com.group_finity.mascot.exception.LostGroundException;
 import com.group_finity.mascot.exception.VariableException;
 
 /**
- * マスコットのアニメーションをあらわすオブジェクト.
+ * Objekt, das die Animation eines Maskottchens beschreibt.
  * 
- * 一定時間置きに {@link #next(Mascot)} が呼び出される
+ * {@link #next(Mascot)} wird in regelmäßigen Abständen aufgerufen
  */
 public interface Action {
 
 	/**
-	 * アクションを開始する時に呼び出す.
-	 * @param mascot 関連付けるマスコット.
+	 * Wird beim Start einer Aktion aufgerufen.
+	 * @param mascot Zugeordnetes Maskottchen.
 	 */
 	public void init(Mascot mascot) throws VariableException;
 
 	/**
-	 * 次のフレームがあるかどうか調べる.
-	 * @return 次のフレームがあるかどうか.
+	 * Prüfen, ob ein weiterer Frame vorhanden ist.
+	 * @return Ob ein weiterer Frame vorhanden ist.
 	 */
 	public boolean hasNext() throws VariableException;
 	
 	/**
-	 * マスコットを次のコマに進める.
-	 * @throws LostGroundException 地面がない.
+	 * Maskottchen zum nächsten Frame weiterschalten.
+	 * @throws LostGroundException Wenn kein Boden vorhanden ist.
 	 */
 	public void next() throws LostGroundException, VariableException;
 	

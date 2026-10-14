@@ -20,7 +20,7 @@ LOCK_FILE = os.path.join(tempfile.gettempdir(), "shimeji-settings.lock")
 IS_WINDOWS = platform.system() == "Windows"
 RUN_SCRIPT = os.path.join(APP_ROOT, "launch.bat" if IS_WINDOWS else "launch.sh")
 
-HEADER = "Put window offsets on the following lines in this order : x, y, width, height. No entry will default to 0."
+HEADER = "Fensterversatz in den folgenden Zeilen angeben: x, y, Breitenzuschlag, Höhenzuschlag. Leere Angaben entsprechen 0."
 DEFAULT_WINDOW = ["0", "0", "0", "0"]
 _lock_handle = None
 
@@ -78,7 +78,7 @@ def set_current_character(name):
 def apply_character(name):
     src = os.path.join(CHARACTERS_DIR, name)
     if not os.path.isdir(src):
-        raise FileNotFoundError(f"Character not found: {name}")
+        raise FileNotFoundError(f"Figur nicht gefunden: {name}")
     if not os.path.exists(IMG_DIR):
         os.makedirs(IMG_DIR, exist_ok=True)
     for i in range(1, 47):
@@ -141,7 +141,7 @@ def restart_shimeji():
             shell=True,
             capture_output=True
         )
-        # Kill Java instances running Shimeji.jar
+        # Laufende Java-Instanzen von Shimeji.jar beenden
         ps_cmd = 'Get-WmiObject Win32_Process | Where-Object { $_.CommandLine -like "*Shimeji.jar*" } | ForEach-Object { $_.Terminate() }'
         subprocess.run(["powershell", "-Command", ps_cmd], capture_output=True)
         subprocess.Popen([RUN_SCRIPT], cwd=APP_ROOT, shell=True)
@@ -153,9 +153,9 @@ def restart_shimeji():
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Shimeji Settings")
-        self.geometry("700x600")
-        self.minsize(660, 560)
+        self.title("Shimeji-Einstellungen")
+        self.geometry("820x650")
+        self.minsize(780, 600)
         self.configure(padx=12, pady=12)
         self.option_add("*Font", "Sans 10")
         self.character_var = tk.StringVar()
@@ -170,20 +170,20 @@ class App(tk.Tk):
         top = ttk.Frame(self)
         top.grid(row=0, column=0, sticky="ew")
         top.grid_columnconfigure(0, weight=1)
-        ttk.Label(top, text="Shimeji Settings", font=("Sans", 14, "bold")).grid(row=0, column=0, sticky="w")
-        ttk.Label(top, text="Chỉnh nhân vật, vị trí bám cửa sổ, titles và hành vi nhân bản.").grid(row=1, column=0, sticky="w", pady=(4, 10))
+        ttk.Label(top, text="Shimeji-Einstellungen", font=("Sans", 14, "bold")).grid(row=0, column=0, sticky="w")
+        ttk.Label(top, text="Figur, Fensterposition, Fenstertitel und Selbstvermehrung einstellen.").grid(row=1, column=0, sticky="w", pady=(4, 10))
 
-        chars = ttk.LabelFrame(self, text="Character")
+        chars = ttk.LabelFrame(self, text="Figur")
         chars.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         chars.grid_columnconfigure(1, weight=1)
-        ttk.Label(chars, text="Current character").grid(row=0, column=0, sticky="w", padx=10, pady=10)
+        ttk.Label(chars, text="Aktuelle Figur").grid(row=0, column=0, sticky="w", padx=10, pady=10)
         self.character_combo = ttk.Combobox(chars, textvariable=self.character_var, state="readonly", values=list_characters())
         self.character_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
-        ttk.Button(chars, text="Apply Character", command=self.apply_character_only).grid(row=0, column=2, sticky="e", padx=(0, 10), pady=10)
+        ttk.Button(chars, text="Figur übernehmen", command=self.apply_character_only).grid(row=0, column=2, sticky="e", padx=(0, 10), pady=10)
 
-        behavior = ttk.LabelFrame(self, text="Behavior")
+        behavior = ttk.LabelFrame(self, text="Verhalten")
         behavior.grid(row=2, column=0, sticky="ew", pady=(0, 10))
-        ttk.Checkbutton(behavior, text="Allow self-cloning / tự nhân bản", variable=self.self_clone_var).grid(row=0, column=0, sticky="w", padx=10, pady=10)
+        ttk.Checkbutton(behavior, text="Selbstvermehrung erlauben", variable=self.self_clone_var).grid(row=0, column=0, sticky="w", padx=10, pady=10)
 
         offsets = ttk.LabelFrame(self, text="window.conf")
         offsets.grid(row=3, column=0, sticky="ew", pady=(0, 10))
@@ -192,10 +192,10 @@ class App(tk.Tk):
 
         self.entries = {}
         fields = [
-            ("x offset", "x"),
-            ("y offset", "y"),
-            ("width add", "w"),
-            ("height add", "h"),
+            ("X-Versatz", "x"),
+            ("Y-Versatz", "y"),
+            ("Breitenzuschlag", "w"),
+            ("Höhenzuschlag", "h"),
         ]
         for idx, (label, key) in enumerate(fields):
             col = idx % 2
@@ -203,18 +203,18 @@ class App(tk.Tk):
             block = ttk.Frame(offsets)
             block.grid(row=row, column=col, sticky="ew", padx=10, pady=8)
             block.grid_columnconfigure(1, weight=1)
-            ttk.Label(block, text=label, width=12).grid(row=0, column=0, sticky="w", padx=(0, 8))
+            ttk.Label(block, text=label, width=16).grid(row=0, column=0, sticky="w", padx=(0, 8))
             ent = ttk.Entry(block, width=12)
             ent.grid(row=0, column=1, sticky="w")
             self.entries[key] = ent
 
-        ttk.Label(offsets, text="Save rồi bấm Restart Shimeji để thấy thay đổi.").grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 10))
+        ttk.Label(offsets, text="Speichern und Shimeji neu starten, um die Änderungen zu sehen.").grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 10))
 
         titles = ttk.LabelFrame(self, text="titles.conf")
         titles.grid(row=4, column=0, sticky="nsew")
         titles.grid_columnconfigure(0, weight=1)
         titles.grid_rowconfigure(1, weight=1)
-        ttk.Label(titles, text="Mỗi dòng một title cửa sổ. Để trống = bám mọi cửa sổ.").grid(row=0, column=0, sticky="w", padx=10, pady=(8, 6))
+        ttk.Label(titles, text="Ein Fenstertitel je Zeile. Leer lassen, um alle Fenster zu verwenden.").grid(row=0, column=0, sticky="w", padx=10, pady=(8, 6))
 
         text_wrap = ttk.Frame(titles)
         text_wrap.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
@@ -228,12 +228,19 @@ class App(tk.Tk):
 
         buttons = ttk.Frame(self)
         buttons.grid(row=5, column=0, sticky="ew", pady=(12, 0))
-        ttk.Button(buttons, text="Save", command=self.save).pack(side="left")
-        ttk.Button(buttons, text="Apply + Restart", command=self.apply_all).pack(side="left", padx=8)
-        ttk.Button(buttons, text="Reset window.conf", command=self.reset_window).pack(side="left")
-        ttk.Button(buttons, text="Restart Shimeji", command=self.restart).pack(side="left", padx=8)
-        ttk.Button(buttons, text="Open App Folder", command=self.open_folder).pack(side="left")
-        ttk.Button(buttons, text="Close", command=self.destroy).pack(side="right")
+        actions = [
+            ("Speichern", self.save),
+            ("Übernehmen + Neustart", self.apply_all),
+            ("window.conf zurücksetzen", self.reset_window),
+            ("Shimeji neu starten", self.restart),
+            ("Programmordner öffnen", self.open_folder),
+            ("Schließen", self.destroy),
+        ]
+        for index, (label, command) in enumerate(actions):
+            buttons.grid_columnconfigure(index % 3, weight=1)
+            ttk.Button(buttons, text=label, command=command).grid(
+                row=index // 3, column=index % 3, sticky="ew", padx=4, pady=4
+            )
 
     def load_values(self):
         chars = list_characters()
@@ -256,21 +263,21 @@ class App(tk.Tk):
         try:
             [int(v) for v in vals]
         except ValueError:
-            messagebox.showerror("Invalid number", "4 ô window.conf phải là số nguyên.")
+            messagebox.showerror("Ungültige Zahl", "Die vier Werte für window.conf müssen ganze Zahlen sein.")
             return False
         write_window_conf(vals)
         write_titles_conf(self.text.get("1.0", "end").rstrip() + "\n" if self.text.get("1.0", "end").strip() else "")
         write_settings_props(self.self_clone_var.get())
-        messagebox.showinfo("Saved", "Đã lưu settings.")
+        messagebox.showinfo("Gespeichert", "Einstellungen gespeichert.")
         return True
 
     def apply_character_only(self):
         name = self.character_var.get().strip()
         if not name:
-            messagebox.showerror("No character", "Chưa chọn nhân vật.")
+            messagebox.showerror("Keine Figur", "Bitte eine Figur auswählen.")
             return False
         apply_character(name)
-        messagebox.showinfo("Character applied", f"Đã áp dụng nhân vật: {name}")
+        messagebox.showinfo("Figur übernommen", f"Figur übernommen: {name}")
         return True
 
     def apply_all(self):
@@ -288,9 +295,9 @@ class App(tk.Tk):
     def restart(self):
         try:
             restart_shimeji()
-            messagebox.showinfo("Restarted", "Đã restart Shimeji.")
+            messagebox.showinfo("Neu gestartet", "Shimeji wurde neu gestartet.")
         except Exception as e:
-            messagebox.showerror("Restart failed", str(e))
+            messagebox.showerror("Neustart fehlgeschlagen", str(e))
 
     def open_folder(self):
         if IS_WINDOWS:

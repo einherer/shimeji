@@ -6,7 +6,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 振り返るアクション.
+ * Aktion zum Umdrehen.
  * @author Yuki Yamada
  */
 public class Look extends InstantAction {

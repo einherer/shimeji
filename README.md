@@ -1,42 +1,42 @@
 # shimeji
 
 <p align="center">
-  <img src="docs/images/repo-banner.png" alt="shimeji banner" width="100%" />
+  <img src="docs/images/repo-banner-de.png" alt="Shimeji-Banner" width="100%" />
 </p>
 
 <p align="center">
-  <img src="docs/images/linux-shimeji-icon.png" alt="shimeji icon" width="64" height="64" />
+  <img src="docs/images/linux-shimeji-icon.png" alt="Shimeji-Symbol" width="64" height="64" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/ngoc-thu/shimeji/releases/latest">⬇ Download latest release</a>
+  <a href="https://github.com/ngoc-thu/shimeji/releases/latest">⬇ Neueste Version herunterladen</a>
 </p>
 
-A modern, practical **Windows 10/11 & Linux** desktop mascot (Shimeji) application featuring native Windows API integration, standalone `.exe` GUI launchers, DPI scaling fixes, and a built-in Settings GUI.
+Eine moderne, praktische Anwendung mit Desktop-Maskottchen (Shimeji) für **Windows 10/11 und Linux**. Sie bietet eine native Windows-API-Anbindung, eigenständige `.exe`-Startprogramme, Korrekturen für die DPI-Skalierung und eine integrierte Einstellungsoberfläche.
 
 ---
 
-## ✨ Features
+## ✨ Funktionen
 
-- **Standalone Windows Executables**:
-  - `Shimeji.exe`: Clean GUI executable launcher with mascot icon (runs silently without a black CMD window).
-  - `ShimejiSettings.exe`: Dedicated GUI settings tool launcher.
-- **Native Windows API Integration**:
-  - Native window enumeration, active window detection, and taskbar collision handling via JNA (`User32` / `GDI32`).
-- **High-DPI Display Scaling & Physics Fixes**:
-  - Fixed floor collision and infinite falling bugs on scaled Windows displays (100%, 125%, 150%, 200%).
-  - Added ±2px tolerance to floor/wall bounds checking for smooth landing.
-- **Built-in Settings GUI**:
-  - `ShimejiSettings.exe` / `shimeji_settings.py` (Python Tkinter).
-  - Easy character switching, `window.conf` offset editing, `titles.conf` window filtering, and self-cloning toggle.
-- **Bundled Character Libraries**:
-  - **Ayaka** & **Hatsune Miku**.
-- **Cross-Platform Compatibility**:
-  - Full support for **Windows 10/11** and **Ubuntu / Linux X11**.
+- **Eigenständige Windows-Programme**:
+  - `Shimeji.exe`: Startprogramm mit Maskottchensymbol; startet ohne schwarzes Konsolenfenster.
+  - `ShimejiSettings.exe`: Eigenständiges Programm für die Einstellungen.
+- **Native Windows-API-Anbindung**:
+  - Erfassung der Fenster, Erkennung des aktiven Fensters und Kollisionserkennung an der Taskleiste über JNA (`User32` / `GDI32`).
+- **Korrekturen für hohe DPI-Skalierung und Bewegungsphysik**:
+  - Behebt fehlerhafte Bodenkollisionen und endloses Fallen bei skalierten Windows-Anzeigen (100 %, 125 %, 150 %, 200 %).
+  - Eine Toleranz von ±2 Pixeln bei Boden- und Wandgrenzen ermöglicht sanftes Landen.
+- **Integrierte Einstellungsoberfläche**:
+  - `ShimejiSettings.exe` / `shimeji_settings.py` (Python mit Tkinter).
+  - Einfacher Figurenwechsel, Bearbeitung des Fensterversatzes in `window.conf`, Fensterfilter in `titles.conf` und Schalter für die Selbstvermehrung.
+- **Mitgelieferte Figuren**:
+  - **Ayaka** und **Hatsune Miku**.
+- **Plattformübergreifende Unterstützung**:
+  - Unterstützung für **Windows 10/11** und **Ubuntu / Linux mit X11**.
 
 ---
 
-## 🎭 Included Characters
+## 🎭 Mitgelieferte Figuren
 
 <table>
   <tr>
@@ -44,72 +44,72 @@ A modern, practical **Windows 10/11 & Linux** desktop mascot (Shimeji) applicati
     <td align="center"><strong>Hatsune Miku</strong></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/ayaka-preview.png" alt="Ayaka preview" width="128" /></td>
-    <td align="center"><img src="docs/images/miku-preview.png" alt="Hatsune Miku preview" width="128" /></td>
+    <td align="center"><img src="docs/images/ayaka-preview.png" alt="Vorschau von Ayaka" width="128" /></td>
+    <td align="center"><img src="docs/images/miku-preview.png" alt="Vorschau von Hatsune Miku" width="128" /></td>
   </tr>
 </table>
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Schnellstart
 
-### On Windows
-1. Make sure **Java 8 or higher** (JDK 19, 21 recommended) and **Python 3.x** are installed.
-2. **Start Mascot**: Double-click `Shimeji.exe` (or `launch.bat`).
-3. **Open Settings**: Double-click `ShimejiSettings.exe` (or `run-settings.bat`).
+### Unter Windows
+1. Stelle sicher, dass **Java 8 oder neuer** (empfohlen: JDK 19 oder 21) und **Python 3.x** installiert sind.
+2. **Maskottchen starten**: Doppelklick auf `Shimeji.exe` oder `launch.bat`.
+3. **Einstellungen öffnen**: Doppelklick auf `ShimejiSettings.exe` oder `run-settings.bat`.
 
-### On Linux
+### Unter Linux
 ```bash
-# Launch mascot
+# Maskottchen starten
 ./launch.sh
 
-# Launch settings GUI
+# Einstellungsoberfläche starten
 ./run-settings.sh
 ```
 
 ---
 
-## 🛠️ Building from Source
+## 🛠️ Aus dem Quelltext erstellen
 
-### On Windows
-Run `build.bat` directly from Command Prompt or PowerShell (no Ant installation required):
+### Unter Windows
+Führe `build.bat` direkt in der Eingabeaufforderung oder in PowerShell aus. Eine Ant-Installation ist nicht erforderlich:
 
 ```cmd
 build.bat
 ```
 
-This compiles all Java sources (`src`, `src_generic`, `src_x11`, `src_win`), packages `Shimeji.jar`, and compiles `Shimeji.exe` & `ShimejiSettings.exe` using `csc.exe`.
+Dabei werden alle Java-Quellen (`src`, `src_generic`, `src_x11`, `src_win`) kompiliert und in `Shimeji.jar` gepackt. Anschließend werden `Shimeji.exe` und `ShimejiSettings.exe` mit `csc.exe` erstellt.
 
-### On Linux
+### Unter Linux
 ```bash
 ant clean jar
 ```
 
 ---
 
-## 📁 Adding Custom Characters
+## 📁 Eigene Figuren hinzufügen
 
-To add a new character to Shimeji:
+So fügst du eine neue Figur hinzu:
 
-1. Create a new folder under `characters/YOUR_CHARACTER_NAME/`.
-2. Place `shime1.png` through `shime46.png` inside that folder.
-3. Open `ShimejiSettings.exe` (or `python shimeji_settings.py`).
-4. Select your new character from the dropdown.
-5. Click **Apply Character** or **Apply + Restart**.
-
----
-
-## ⚙️ Configuration Files
-
-- **`window.conf`**: Custom window offset adjustments (order: `x`, `y`, `width add`, `height add`).
-- **`titles.conf`**: Filter target windows by title (one title per line; leave blank to allow interaction with all active windows).
-- **`settings.properties`**: Persistence for behavior flags (e.g. `selfCloningEnabled=true|false`).
+1. Erstelle einen neuen Ordner unter `characters/DEIN_FIGURENNAME/`.
+2. Lege darin die Dateien `shime1.png` bis `shime46.png` ab.
+3. Öffne `ShimejiSettings.exe` oder führe `python shimeji_settings.py` aus.
+4. Wähle deine neue Figur aus der Auswahlliste.
+5. Klicke auf **Figur übernehmen** oder **Übernehmen + Neustart**.
 
 ---
 
-## 📜 License & Credits
+## ⚙️ Konfigurationsdateien
 
-This project inherits the ZLIB/LIBPNG license of the original Shimeji project by Yuki Yamada of Group Finity.
+- **`window.conf`**: Anpassungen des Fensterversatzes in der Reihenfolge `x`, `y`, `Breitenzuschlag`, `Höhenzuschlag`.
+- **`titles.conf`**: Filtert Zielfenster anhand ihres Titels. Ein Titel pro Zeile; leer lassen, um alle aktiven Fenster zu verwenden.
+- **`settings.properties`**: Speichert Verhaltenseinstellungen, zum Beispiel `selfCloningEnabled=true|false`.
 
-- **Java Native Access (JNA)**: Licensed under LGPL.
-- **Mozilla Rhino JS Engine**: Licensed under MPL.
+---
+
+## 📜 Lizenz und Danksagung
+
+Dieses Projekt übernimmt die ZLIB/LIBPNG-Lizenz des ursprünglichen Shimeji-Projekts von Yuki Yamada (Group Finity). Der Lizenztext steht im [Original](LICENSE) und als [deutsche Übersetzung](LICENSE.de) zur Verfügung.
+
+- **Java Native Access (JNA)**: Unter der LGPL lizenziert.
+- **Mozilla Rhino JS Engine**: Unter der MPL lizenziert.

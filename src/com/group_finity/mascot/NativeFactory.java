@@ -8,8 +8,8 @@ import com.group_finity.mascot.image.TranslucentWindow;
 import com.sun.jna.Platform;
 
 /**
- * ネイティブ環境へのアクセスを提供する.
- * {@link #getInstance()} は実行環境によって Windows 用あるいは汎用のサブクラスのインスタンスを返す.
+ * Ermöglicht den Zugriff auf die native Umgebung.
+ * {@link #getInstance()} liefert je nach Laufzeitumgebung eine Windows-spezifische oder allgemeine Unterklasse.
  * @author Yuki
  */
 public abstract class NativeFactory {
@@ -17,7 +17,7 @@ public abstract class NativeFactory {
 	private static final NativeFactory instance;
 
 	/**
-	 * サブクラスのインスタンスを作成しておく.
+	 * Instanz einer Unterklasse vorab erstellen.
 	 */
 	static {
 		final String basePackage = NativeFactory.class.getName().substring(0, NativeFactory.class.getName().lastIndexOf('.'));
@@ -39,7 +39,7 @@ public abstract class NativeFactory {
 	}
 
 	/**
-	 * 実行環境に応じたサブクラスのインスタンスを取得する.
+	 * Zur Laufzeitumgebung passende Instanz einer Unterklasse abrufen.
 	 * @return
 	 */
 	public static NativeFactory getInstance() {
@@ -47,21 +47,21 @@ public abstract class NativeFactory {
 	}
 
 	/**
-	 * 環境オブジェクトを取得する.
-	 * @return 環境オブジェクト.
+	 * Umgebungsobjekt abrufen.
+	 * @return Umgebungsobjekt.
 	 */
 	public abstract Environment getEnvironment();
 
 	/**
-	 * 指定された BufferedImage に対応するネイティブな画像を取得する.
-	 * この画像は {@link TranslucentWindow} のマスキングに使用できる.
+	 * Zum angegebenen BufferedImage passendes natives Bild abrufen.
+	 * Dieses Bild kann zur Maskierung eines {@link TranslucentWindow} verwendet werden.
 	 * @param src
 	 * @return
 	 */
 	public abstract NativeImage newNativeImage(BufferedImage src);
 
 	/**
-	 * 半透明表示が可能なウィンドウを作成する.
+	 * Fenster mit halbtransparenter Darstellung erstellen.
 	 * @return
 	 */
 	public abstract TranslucentWindow newTransparentWindow();

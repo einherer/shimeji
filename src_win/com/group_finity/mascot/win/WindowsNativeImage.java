@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import com.group_finity.mascot.image.NativeImage;
 
 /**
- * Windows NativeImage wrapper.
+ * Windows-Wrapper für NativeImage.
  */
 public class WindowsNativeImage implements NativeImage {
 

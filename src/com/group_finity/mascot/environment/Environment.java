@@ -71,18 +71,18 @@ public abstract class Environment {
 	}
 
 	/**
-	 * 画面の領域を取得する. この領域はディスプレイの左上から右下まですべてを含む.
+	 * Bildschirmbereich von der linken oberen bis zur rechten unteren Ecke abrufen.
 	 *
-	 * @return 画面の領域.
+	 * @return Bildschirmbereich.
 	 */
 	private static Rectangle getScreenRect() {
 		return screenRect;
 	}
 
 	/**
-	 * カーソルの座標を取得する.
+	 * Position des Mauszeigers abrufen.
 	 *
-	 * @return カーソルの座標.
+	 * @return Position des Mauszeigers.
 	 */
 	private static Point getCursorPos() {
 		return MouseInfo.getPointerInfo().getLocation();

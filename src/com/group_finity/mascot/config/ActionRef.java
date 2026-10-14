@@ -24,10 +24,10 @@ public class ActionRef implements IActionBuilder {
 
 		this.name = refNode.getAttribute("名前");
 		this.getParams().putAll(refNode.getAttributes());
-		log.log(Level.INFO, "動作参照読み込み({0})", this);
+		log.log(Level.INFO, "Aktionsreferenz wird geladen ({0})", this);
 
-	// Convert every non-jump ActionReference to multiwindow format.
-	// Necessary for using 'standard' configurations. 
+	// Jede ActionReference außer Sprüngen auf das Mehrfensterformat umstellen.
+	// Für die Verwendung von Standardkonfigurationen erforderlich.
 		if (!name.contains("ジャンプ")) {
 			String s = params.get("目的地X");
 			if (s != null) {
@@ -55,7 +55,7 @@ public class ActionRef implements IActionBuilder {
 
 	@Override
 	public String toString() {
-		return "動作参照(" + getName() + ")";
+		return "Aktionsreferenz(" + getName() + ")";
 	}
 
 	private String getName() {
@@ -73,7 +73,7 @@ public class ActionRef implements IActionBuilder {
 	@Override
 	public void validate() throws ConfigurationException {
 		if (!getConfiguration().getActionBuilders().containsKey(getName())) {
-			throw new ConfigurationException("対応する動作が存在しません(" + this + ")");
+			throw new ConfigurationException("Zugehörige Aktion ist nicht vorhanden (" + this + ")");
 		}
 	}
 

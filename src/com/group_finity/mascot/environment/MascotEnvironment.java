@@ -25,7 +25,7 @@ public class MascotEnvironment {
 	}
 
 	/**
-	 * マスコットを含むスクリーンを取得する
+	 * Bildschirm ermitteln, auf dem sich das Maskottchen befindet
 	 * @return
 	 */
 	public Area getWorkArea() {
@@ -34,8 +34,8 @@ public class MascotEnvironment {
 		}
 
 		//if ( currentWorkArea!=null ) {
-			 //NOTE Windows マルチモニタ対応 Windowsのワークエリアはメインのスクリーンより小さい。
-			 //現在のスクリーンがワークエリアを含んでおり、かつマスコットがワークエリアに含まれているならばワークエリアを優先する。
+			 //HINWEIS: Mehrmonitorunterstützung unter Windows. Der Arbeitsbereich ist kleiner als der Hauptbildschirm.
+			 //Den Arbeitsbereich bevorzugen, wenn der aktuelle Bildschirm ihn enthält und das Maskottchen innerhalb dieses Arbeitsbereichs liegt.
 			//if ( currentWorkArea!=impl.getWorkArea() && currentWorkArea.toRectangle().contains(impl.getWorkArea().toRectangle()) ) {
 				//if (impl.getWorkArea().contains(mascot.getAnchor().x, mascot.getAnchor().y)) {
 					//currentWorkArea = impl.getWorkArea();
@@ -43,20 +43,20 @@ public class MascotEnvironment {
 				//}
 			//}
 
-			 //NOTE マルチモニタ対応 マスコットが複数のモニタに同時に含まれる場合があるが、
-			 //その場合は現在のモニタを優先する
+			 //HINWEIS: Bei mehreren Monitoren kann ein Maskottchen gleichzeitig auf mehreren Monitoren liegen;
+			 //in diesem Fall den aktuellen Monitor bevorzugen
 			//if ( currentWorkArea.contains(mascot.getAnchor().x, mascot.getAnchor().y) ) {
 				//return currentWorkArea;
 			//}
 		//}
 
-		 //まずワークエリアに含まれているか調べる
+		 //Zuerst prüfen, ob es sich im Arbeitsbereich befindet
 		//if (impl.getWorkArea().contains(mascot.getAnchor().x, mascot.getAnchor().y)) {
 			//currentWorkArea = impl.getWorkArea();
 			//return currentWorkArea;
 		//}
 
-		 //各モニタに含まれているか調べる
+		 //Prüfen, auf welchem Monitor es sich befindet
 		if (currentWorkArea != null) {
 			if (currentWorkArea.getTopBorder().isOn(mascot.getAnchor())) {
 				return currentWorkArea;
@@ -144,9 +144,9 @@ public class MascotEnvironment {
 	}
 
 /*
- * getFloor() - Environment check. Checks both the currently active windows
- * and the bottom of the screen. Returns the border if on one. Controls the
- * current Floor/Ceiling attribute of each mascot.
+ * getFloor() – Umgebungsprüfung. Prüft sowohl die aktuell aktiven Fenster
+ * und den unteren Bildschirmrand. Gibt gegebenenfalls den berührten Rand zurück. Steuert das
+ * aktuelle Floor/Ceiling-Attribut jedes Maskottchens.
  */
 	public Border getFloor(boolean ignoreSeparator) {
 		if (getIE().onTop(mascot.getAnchor())) {
@@ -156,8 +156,8 @@ public class MascotEnvironment {
 				return NotOnVisibleBorder.INSTANCE;
 			}
 			if (currentWorkArea == null) currentWorkArea = impl.getWorkArea();
-		// Don't let the mascot get footing on any window ceiling within 64px
-		// of the top of the screen.
+		// Das Maskottchen darf sich nicht an Fensterunterkanten innerhalb von 64 Pixeln
+		// unterhalb des oberen Bildschirmrands festhalten.
 			if (fc.getY() >= currentWorkArea.getTop()+64) {
 				mascot.setCurFC(fc);
 				return getIE().getTop(mascot.getAnchor());
@@ -182,13 +182,13 @@ public class MascotEnvironment {
 	}
 
 /*
- * getWall() - Environment check. Checks both the currently active windows
- * and the sides of the screen. Returns the border if on one. Controls the
- * current Wall attribute of each mascot.
+ * getWall() – Umgebungsprüfung. Prüft sowohl die aktuell aktiven Fenster
+ * und die Bildschirmseiten. Gibt gegebenenfalls den berührten Rand zurück. Steuert das
+ * aktuelle Wall-Attribut jedes Maskottchens.
  */
 	public Border getWall(boolean ignoreSeparator) {
-	 //Don't let the mascot hold onto window walls when within 64px of
-	 //the top of the screen.
+	 //Das Maskottchen darf sich nicht an Fensterseiten innerhalb von 64 Pixeln
+	 //unterhalb des oberen Bildschirmrands abstützen.
 		if ( mascot.getAnchor().getY() <= getWorkArea().getTop()+64) { 
 			Point p = mascot.getAnchor();
 			if (mascot.onBorder()) {

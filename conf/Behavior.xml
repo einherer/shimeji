@@ -6,7 +6,7 @@
 
 	<行動リスト>
 
-		<!-- システムが使用する -->
+		<!-- Vom System benötigt -->
 		<行動 名前="マウスの周りに集まる" 頻度="0">
 			<次の行動リスト 追加="false">
 				<行動参照 名前="座ってマウスのほうを見る" 頻度="1" />
@@ -27,19 +27,19 @@
 			</次の行動リスト>
 		</行動>
 
-		<!-- システムが使用する -->
+		<!-- Vom System benötigt -->
 		<行動 名前="落下する" 頻度="0" />
 
-		<!-- システムが使用する -->
+		<!-- Vom System benötigt -->
 		<行動 名前="ドラッグされる" 頻度="0" />
 
-		<!-- システムが使用する -->
+		<!-- Vom System benötigt -->
 		<行動 名前="投げられる" 頻度="0" />
 
 		<行動 名前="引っこ抜かれる" 頻度="0" />
 		<行動 名前="分裂した" 頻度="0" />
 
-		<!-- 地面に接しているとき -->
+		<!-- Bei Bodenkontakt -->
 		<条件
 			条件="#{mascot.environment.floor.isOn(mascot.anchor) || mascot.environment.activeIE.topBorder.isOn(mascot.anchor)}">
 			<行動 名前="立ってボーっとする" 頻度="200" />
@@ -63,7 +63,7 @@
 			<行動 名前="分裂する" 頻度="50" 条件="#{mascot.totalCount &lt; maxCount}" />
 		</条件>
 
-		<!-- 壁に接しているとき -->
+		<!-- Bei Wandkontakt -->
 		<条件
 			条件="#{ mascot.lookRight ? (
 					mascot.environment.workArea.rightBorder.isOn(mascot.anchor) ||
@@ -75,20 +75,20 @@
 				条件="${!mascot.environment.floor.isOn(mascot.anchor)}" />
 		</条件>
 
-		<!-- 天井に接しているとき -->
+		<!-- Bei Deckenkontakt -->
 		<条件
 			条件="#{mascot.environment.ceiling.isOn(mascot.anchor) || mascot.environment.activeIE.bottomBorder.isOn(mascot.anchor)}">
 			<行動 名前="天井に掴まってボーっとする" 頻度="100" />
 			<行動 名前="天井から落ちる" 頻度="50" />
 		</条件>
 
-		<!-- ワークエリアの下辺に接しているとき -->
+		<!-- Am unteren Rand des Arbeitsbereichs -->
 		<条件 条件="#{mascot.environment.floor.isOn(mascot.anchor)}">
 			<行動 名前="ワークエリアの下辺を歩く" 頻度="100" />
 			<行動 名前="ワークエリアの下辺を走る" 頻度="100" />
 			<行動 名前="ワークエリアの下辺でずりずり" 頻度="10">
 				<次の行動リスト 追加="false">
-					<!-- ずりずりした後はそのままボーっとする -->
+					<!-- Nach dem Kriechen untätig bleiben -->
 					<行動参照 名前="寝そべってボーっとする" 頻度="1" />
 				</次の行動リスト>
 			</行動>
@@ -107,7 +107,7 @@
 			<行動 名前="引っこ抜く" 頻度="50" 条件="#{mascot.totalCount &lt; maxCount}" />
 		</条件>
 
-		<!-- ワークエリアの壁に接しているとき -->
+		<!-- An der Seitenwand des Arbeitsbereichs -->
 		<条件
 			条件="#{mascot.lookRight ? mascot.environment.workArea.rightBorder.isOn(mascot.anchor) :
 					mascot.environment.workArea.leftBorder.isOn(mascot.anchor)}">
@@ -115,18 +115,18 @@
 			<行動 名前="ワークエリアの壁を登る" 頻度="100" />
 		</条件>
 
-		<!-- ワークエリアの上辺に接しているとき -->
+		<!-- Am oberen Rand des Arbeitsbereichs -->
 		<条件 条件="#{mascot.environment.ceiling.isOn(mascot.anchor)}">
 			<行動 名前="ワークエリアの上辺を伝う" 頻度="100" />
 		</条件>
 
-		<!-- IEの上辺に接しているとき -->
+		<!-- Am oberen Rand des IE-Fensters -->
 		<条件 条件="#{mascot.environment.activeIE.topBorder.isOn(mascot.anchor)}">
 			<行動 名前="IEの天井を歩く" 頻度="100" />
 			<行動 名前="IEの天井を走る" 頻度="100" />
 			<行動 名前="IEの天井でずりずり" 頻度="10">
 				<次の行動リスト 追加="false">
-					<!-- ずりずりした後はそのままボーっとする -->
+					<!-- Nach dem Kriechen untätig bleiben -->
 					<行動参照 名前="寝そべってボーっとする" 頻度="1" />
 				</次の行動リスト>
 			</行動>
@@ -140,7 +140,7 @@
 			<行動 名前="走ってIEの天井の右の端っこから飛び降りる" 頻度="100" />
 		</条件>
 
-		<!-- IEの壁に接しているとき -->
+		<!-- An der Seitenwand des IE-Fensters -->
 		<条件
 			条件="#{mascot.lookRight ? mascot.environment.activeIE.leftBorder.isOn(mascot.anchor) :
 					mascot.environment.activeIE.rightBorder.isOn(mascot.anchor)}">
@@ -149,7 +149,7 @@
 
 		</条件>
 
-		<!-- IEの下辺に接しているとき -->
+		<!-- Am unteren Rand des IE-Fensters -->
 		<条件 条件="#{mascot.environment.activeIE.bottomBorder.isOn(mascot.anchor)}">
 			<行動 名前="IEの下辺を伝う" 頻度="100" />
 			<行動 名前="IEの下辺から左の壁によじのぼる" 頻度="100" />
@@ -165,7 +165,7 @@
 			mascot.anchor.x &gt;= mascot.environment.workArea.right-400 &amp;&amp;
 			Math.abs(mascot.environment.workArea.bottom-mascot.anchor.y) &lt;mascot.environment.workArea.height/4}" />
 
-		<!-- IEが見えるとき -->
+		<!-- Wenn das IE-Fenster sichtbar ist -->
 		<条件 条件="#{mascot.environment.activeIE.visible}">
 			<行動 名前="IEの左に飛びつく" 頻度="50"
 				条件="#{mascot.anchor.x &lt; mascot.environment.activeIE.left &amp;&amp;

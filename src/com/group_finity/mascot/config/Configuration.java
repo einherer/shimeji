@@ -32,29 +32,29 @@ public class Configuration {
 
 	public void load(final Entry configurationNode) throws IOException, ConfigurationException {
 
-		log.log(Level.INFO, "設定読み込み開始");
+		log.log(Level.INFO, "Einstellungen werden geladen");
 
 		for (final Entry constant : configurationNode.selectChildren("定数")) {
-			log.log(Level.INFO, "定数...");
+			log.log(Level.INFO, "Konstanten ...");
 			constants.put( constant.getAttribute("名前"), constant.getAttribute("値") );
 		}
 
 		for (final Entry list : configurationNode.selectChildren("動作リスト")) {
-			log.log(Level.INFO, "動作リスト...");
+			log.log(Level.INFO, "Aktionsliste ...");
 			for (final Entry node : list.selectChildren("動作")) {
 				final ActionBuilder action = new ActionBuilder(this, node);
 				if ( this.getActionBuilders().containsKey(action.getName())) {
-					throw new ConfigurationException("動作の名前が重複しています:"+action.getName());
+					throw new ConfigurationException("Aktionsname ist mehrfach vergeben: "+action.getName());
 				}
 				this.getActionBuilders().put(action.getName(), action);
 			}
 		}
 
 		for (final Entry list : configurationNode.selectChildren("行動リスト")) {
-			log.log(Level.INFO, "行動リスト...");
+			log.log(Level.INFO, "Verhaltensliste ...");
 			loadBehaviors(list, new ArrayList<String>());
 		}
-		log.log(Level.INFO, "設定読み込み完了");
+		log.log(Level.INFO, "Einstellungen wurden geladen");
 		
 	}
 
@@ -78,7 +78,7 @@ public class Configuration {
 
 		final ActionBuilder factory = this.actionBuilders.get(name);
 		if (factory == null) {
-			throw new ActionInstantiationException("対応する動作が見つかりません: " + name);
+			throw new ActionInstantiationException("Zugehörige Aktion nicht gefunden: " + name);
 		}
 
 		return factory.buildAction(params);
@@ -99,7 +99,7 @@ public class Configuration {
 		final VariableMap context = new VariableMap();
 		context.put("mascot", mascot);
 
-		// TODO ここ以外で必要な場合は？根本的につくりを見直すべき
+		// TODO: Was passiert, wenn dies an anderer Stelle benötigt wird? Den grundlegenden Aufbau überdenken
 		for( Map.Entry<String, String> e : constants.entrySet() ) {
 			context.put(e.getKey(), e.getValue());
 		}
@@ -113,7 +113,7 @@ public class Configuration {
 					totalFrequency += behaviorFactory.getFrequency();
 				}
 			} catch (final VariableException e) {
-				log.log(Level.WARNING, "行動頻度の評価中にエラーが発生しました", e);
+				log.log(Level.WARNING, "Fehler beim Auswerten der Verhaltenshäufigkeit", e);
 			}
 		}
 
@@ -130,7 +130,7 @@ public class Configuration {
 						totalFrequency += behaviorFactory.getFrequency();
 					}
 				} catch (final VariableException e) {
-					log.log(Level.WARNING, "行動頻度の評価中にエラーが発生しました", e);
+					log.log(Level.WARNING, "Fehler beim Auswerten der Verhaltenshäufigkeit", e);
 				}
 			}
 		}

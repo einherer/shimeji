@@ -10,7 +10,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * ドラッグに抵抗するアクション.
+ * Aktion zum Widerstand gegen das Ziehen mit der Maus.
  */
 public class Regist extends ActionBase {
 
@@ -31,16 +31,16 @@ public class Regist extends ActionBase {
 	@Override
 	protected void tick() throws LostGroundException, VariableException {
 
-		// アニメーションさせる
+		// Animation ausführen
 		final Animation animation = getAnimation();
 		animation.next(getMascot(), getTime());
 
 		if (getTime() + 1 >= getAnimation().getDuration()) {
-			// 期間が過ぎたので終了.
+			// Beenden, da die Dauer abgelaufen ist.
 
 			getMascot().setLookRight(Math.random() < 0.5);
 
-			log.log(Level.INFO, "マウスから逃げた({0},{1})", new Object[] { getMascot(), this });
+			log.log(Level.INFO, "Der Maus entkommen ({0},{1})", new Object[] { getMascot(), this });
 			throw new LostGroundException();
 		}
 

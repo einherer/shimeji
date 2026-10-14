@@ -44,8 +44,8 @@ public class BehaviorBuilder {
 		this.conditions = new ArrayList<String>(conditions);
 		this.getConditions().add(behaviorNode.getAttribute("条件"));
 
-	// Conversion to multiwindow environment checks
-	// Also set IE throw frequency to 0
+	// Umstellung der Umgebungsprüfungen auf mehrere Fenster
+	// Auch die Häufigkeit des IE-Fensterwurfs auf 0 setzen
 		if (name.contains("投げる")) frequency = 0;
 		if (name.equals("落下する")) frequency = 1;
 		if (!name.contains("に飛びつく")) {
@@ -58,7 +58,7 @@ public class BehaviorBuilder {
 			}
 		}
 
-		log.log(Level.INFO, "行動読み込み開始({0})", this);
+		log.log(Level.INFO, "Verhalten wird geladen ({0})", this);
 
 		this.getParams().putAll(behaviorNode.getAttributes());
 		this.getParams().remove("名前");
@@ -70,7 +70,7 @@ public class BehaviorBuilder {
 
 		for (final Entry nextList : behaviorNode.selectChildren("次の行動リスト")) {
 
-			log.log(Level.INFO, "次の行動リスト...");
+			log.log(Level.INFO, "Liste der nächsten Verhaltensweisen ...");
 
 			nextAdditive = Boolean.parseBoolean(nextList.getAttribute("追加"));
 
@@ -79,13 +79,13 @@ public class BehaviorBuilder {
 
 		this.nextAdditive = nextAdditive;
 
-		log.log(Level.INFO, "行動読み込み完了({0})", this);
+		log.log(Level.INFO, "Verhalten wurde geladen ({0})", this);
 
 	}
 
 	@Override
 	public String toString() {
-		return "行動(" + getName() + "," + getFrequency() + "," + getActionName() + ")";
+		return "Verhalten(" + getName() + "," + getFrequency() + "," + getActionName() + ")";
 	}
 
 	private void loadBehaviors(final Entry list, final List<String> conditions) {
@@ -109,7 +109,7 @@ public class BehaviorBuilder {
 	public void validate() throws ConfigurationException {
 
 		if ( !getConfiguration().getActionBuilders().containsKey(getActionName()) ) {
-			throw new ConfigurationException("対応する動作が存在しません("+this+")");
+			throw new ConfigurationException("Zugehörige Aktion ist nicht vorhanden ("+this+")");
 		}
 	}
 
@@ -120,7 +120,7 @@ public class BehaviorBuilder {
 						getConfiguration().buildAction(getActionName(),
 								getParams()), getConfiguration() );
 		} catch (final ActionInstantiationException e) {
-			throw new BehaviorInstantiationException("対応する動作の初期化に失敗しました("+this+")", e);
+			throw new BehaviorInstantiationException("Zugehörige Aktion konnte nicht initialisiert werden ("+this+")", e);
 		}
 	}
 

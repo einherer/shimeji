@@ -14,22 +14,22 @@ import com.group_finity.mascot.image.MascotImage;
 import com.group_finity.mascot.image.TranslucentWindow;
 
 /**
- * マスコットオブジェクト.
+ * Maskottchenobjekt.
  *
- * マスコットは長期的で複雑な振る舞いをあらわす {@link Behavior} と、
- * 短期的で単調な動きを表す {@link Action} で動く.
+ * Ein Maskottchen wird durch {@link Behavior} für langfristiges, komplexes Verhalten und
+ * {@link Action} für kurzfristige, einfache Bewegungen gesteuert.
  *
- * マスコットは内部的にタイマを持っていて、一定間隔ごとに {@link Action} を呼び出す.
- * {@link Action} は {@link #animate(Point, MascotImage, boolean)} メソッドなどを呼ぶことで
- * マスコットをアニメーションさせる.
+ * Ein interner Timer ruft {@link Action} in regelmäßigen Abständen auf.
+ * Eine {@link Action} kann über {@link #animate(Point, MascotImage, boolean)} und ähnliche Methoden das
+ * Maskottchen animieren.
  *
- * {@link Action} が終了したり、その他の特定のタイミングで {@link Behavior} が呼び出され、次の {@link Action} に移る.
+ * Wenn eine {@link Action} endet oder ein anderes vorgesehenes Ereignis eintritt, wird {@link Behavior} aufgerufen und die nächste {@link Action} gestartet.
  *
  */
 public class Mascot {
 
 	private static final long serialVersionUID = 1L;
-	// Storing current border object and the associated IE window for condition checks.
+	// Aktuellen Rand und zugehöriges IE-Fenster für Bedingungsprüfungen speichern.
 	private Area curIE = new Area();
 	private FloorCeiling curFC;
 	private Wall curW;
@@ -37,61 +37,61 @@ public class Mascot {
 	private static final Logger log = Logger.getLogger(Mascot.class.getName());
 
 	/**
-	 * 最後に生成したマスコットのID.
+	 * ID des zuletzt erzeugten Maskottchens.
 	 */
 	private static AtomicInteger lastId = new AtomicInteger();
 
 	/**
-	 * マスコットのID.
-	 * デバッグ用のログを見やすくするためだけに存在する.
+	 * ID des Maskottchens.
+	 * Dient ausschließlich der besseren Lesbarkeit von Diagnoseprotokollen.
 	 */
 	private final int id;
 
 	/**
-	 * マスコットを表示するウィンドウ.
+	 * Fenster zur Anzeige des Maskottchens.
 	 */
 	private final TranslucentWindow window = NativeFactory.getInstance().newTransparentWindow();
 
 	/**
-	 * マスコットを管理しているマネージャ.
+	 * Manager, der das Maskottchen verwaltet.
 	 */
 	private Manager manager = null;
 
 	/**
-	 * マスコットの接地座標.
-	 * たとえば足元や、ぶら下がっているときの手の部分など.
-	 * ここが画像を表示するときの中心になる.
+	 * Ankerposition des Maskottchens.
+	 * Zum Beispiel die Füße oder beim Hängen die Hände.
+	 * Dieser Punkt dient als Mittelpunkt bei der Bildanzeige.
 	 */
 	private Point anchor = new Point(0, 0);
 
 	/**
-	 * 表示する画像.
+	 * Anzuzeigendes Bild.
 	 */
 	private MascotImage image = null;
 
 	/**
-	 * 右向きかどうか.
-	 * オリジナル画像は左向きとして扱われるので、trueを設定すると反転して描画される.
+	 * Ob das Maskottchen nach rechts blickt.
+	 * Das Originalbild blickt nach links; bei true wird es gespiegelt gezeichnet.
 	 */
 	private boolean lookRight = false;
 
 	/**
-	 * 長期的な振る舞いをあらわすオブジェクト.
+	 * Objekt, das das langfristige Verhalten beschreibt.
 	 */
 	private Behavior behavior = null;
 
 	/**
-	 * タイマーの1チックごとに増加する時刻.
+	 * Zeitwert, der bei jedem Timer-Tick erhöht wird.
 	 */
 	private int time = 0;
 
 	/**
-	 * アニメーション実行中かどうか.
+	 * Ob die Animation gerade läuft.
 	 */
 	private boolean animating = true;
 
 	/**
-	 * マスコットの表示環境.
+	 * Anzeigeumgebung des Maskottchens.
 	 */
 	
 	private MascotEnvironment environment = new MascotEnvironment(this);
@@ -99,23 +99,23 @@ public class Mascot {
 	public Mascot() {
 		this.id = lastId.incrementAndGet();
 
-		log.log(Level.INFO, "マスコット生成({0})", this);
+		log.log(Level.INFO, "Maskottchen erstellt ({0})", this);
 
-		// 常に最善面に表示
+		// Immer im Vordergrund anzeigen
 		getWindow().asJWindow().setAlwaysOnTop(true);
 		//getWindow().asJWindow().setBounds(0,0,128,128);
 
-		// マウスハンドラを登録
+		// Mausereignisbehandlung registrieren
 		getWindow().asJWindow().addMouseListener(new MascotEventHandler(this));
 
 	}
 
 	@Override
 	public String toString() {
-		return "マスコット" + this.id;
+		return "Maskottchen" + this.id;
 	}
 	void tick() {
-	// Update the current IE window the mascot is attached to based on floor/wall checks
+	// Zugeordnetes IE-Fenster anhand der Boden- und Wandprüfungen aktualisieren
 		setCurIE();
 		if (isAnimating()) {
 			if (getBehavior() != null) {
@@ -123,7 +123,7 @@ public class Mascot {
 				try {
 					getBehavior().next();
 				} catch (final CantBeAliveException e) {
-					log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+					log.log(Level.SEVERE, "Maskottchen kann in dieser Situation nicht weiterlaufen", e);
 					dispose();
 				}
 
@@ -135,39 +135,39 @@ public class Mascot {
 
 	public void apply() {
 		if (isAnimating()) {
-			// 表示できる画像が無ければ何も出来ない
+			// Ohne darstellbares Bild ist keine Aktion möglich
 			if (getImage() != null) {
 
-				// 画像を設定
+				// Bild festlegen
 				getWindow().setImage(getImage().getImage());
 
-				// ウィンドウの領域を設定
+				// Fensterbereich festlegen
 				getWindow().asJWindow().setBounds(getBounds());
 
-				// 表示
+				// Anzeigen
 				if (!getWindow().asJWindow().isVisible()) {
 					getWindow().asJWindow().setVisible(true);
 				}
 				getWindow().asJWindow().setAlwaysOnTop(true);
 				getWindow().asJWindow().toFront();
 
-				// 再描画
+				// Neu zeichnen
 				getWindow().updateImage();
 			} else {
 				if (getWindow().asJWindow().isVisible()) {
 					getWindow().asJWindow().setVisible(false);
 				}
 			}
-			// Do not force the mascot into DOCK window type on modern desktops.
-			// That can place it in an unexpected layer under/through decorated windows.
-			// Old X11 workaround hid the window on specific ticks, which can cause
-			// visible flicker on modern compositors. Keep the mascot visible and
-			// rely on the regular image update path instead.
+			// Auf modernen Desktops für das Maskottchen keinen DOCK-Fenstertyp erzwingen.
+			// Dadurch kann es auf einer unerwarteten Ebene unter oder zwischen Fenstern mit Rahmen landen.
+			// Die alte X11-Behelfslösung blendete das Fenster bei bestimmten Ticks aus. Das kann
+			// bei modernen Compositors sichtbar flackern. Das Maskottchen sichtbar lassen und
+			// den regulären Ablauf zur Bildaktualisierung verwenden.
 		}
 	}
 
 	public void dispose() {
-		log.log(Level.INFO, "マスコット破棄({0})", this);
+		log.log(Level.INFO, "Maskottchen entfernt ({0})", this);
 
 		getWindow().asJWindow().dispose();
 		if (getManager() != null) {
@@ -213,7 +213,7 @@ public class Mascot {
 
 	public Rectangle getBounds() {
 
-		// 接地座標と画像の中心座標からウィンドウの領域を求める.
+		// Fensterbereich aus Ankerposition und Bildmittelpunkt berechnen.
 		final int top = getAnchor().y - getImage().getCenter().y;
 		final int left = getAnchor().x - getImage().getCenter().x;
 

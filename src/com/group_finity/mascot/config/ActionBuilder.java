@@ -44,7 +44,7 @@ public class ActionBuilder implements IActionBuilder {
 		this.type = actionNode.getAttribute("種類");
 		this.className = actionNode.getAttribute("クラス");
 
-		log.log(Level.INFO, "動作読み込み開始({0})", this);
+		log.log(Level.INFO, "Aktion wird geladen ({0})", this);
 
 		this.getParams().putAll(actionNode.getAttributes());
 		for (final Entry node : actionNode.selectChildren("アニメーション")) {
@@ -59,25 +59,25 @@ public class ActionBuilder implements IActionBuilder {
 			}
 		}
 
-		log.log(Level.INFO, "動作読み込み完了");
+		log.log(Level.INFO, "Aktion wurde geladen");
 	}
 
 	@Override
 	public String toString() {
-		return "動作(" + getName() + "," + getType() + "," + getClassName() + ")";
+		return "Aktion(" + getName() + "," + getType() + "," + getClassName() + ")";
 	}
 
 	@SuppressWarnings("unchecked")
 	public Action buildAction(final Map<String, String> params) throws ActionInstantiationException {
 
 		try {
-			// 変数マップを生成
+			// Variablenzuordnung erstellen
 			final VariableMap variables = createVariables(params);
 
-			// アニメーションを生成
+			// Animation erzeugen
 			final List<Animation> animations = createAnimations();
 
-			// 子アクションを生成
+			// Untergeordnete Aktionen erzeugen
 			final List<Action> actions = createActions();
 
 			if (this.type.equals("組み込み")) {
@@ -88,21 +88,21 @@ public class ActionBuilder implements IActionBuilder {
 						try {
 							return cls.getConstructor(List.class, VariableMap.class).newInstance(animations, variables);
 						} catch (final Exception e) {
-							// NOTE コンストラクタが無かったと思われるので次へ
+							// HINWEIS: Da offenbar kein Konstruktor vorhanden ist, mit der nächsten Möglichkeit fortfahren
 						}
 
 						return cls.getConstructor(VariableMap.class).newInstance(variables);
 					} catch (final Exception e) {
-						// NOTE コンストラクタが無かったと思われるので次へ
+						// HINWEIS: Da offenbar kein Konstruktor vorhanden ist, mit der nächsten Möglichkeit fortfahren
 					}
 
 					return cls.newInstance();
 				} catch (final InstantiationException e) {
-					throw new ActionInstantiationException("動作クラスの初期化に失敗(" + this + ")", e);
+					throw new ActionInstantiationException("Aktionsklasse konnte nicht initialisiert werden (" + this + ")", e);
 				} catch (final IllegalAccessException e) {
-					throw new ActionInstantiationException("動作クラスにアクセスできません(" + this + ")", e);
+					throw new ActionInstantiationException("Kein Zugriff auf die Aktionsklasse (" + this + ")", e);
 				} catch (final ClassNotFoundException e) {
-					throw new ActionInstantiationException("動作クラスが見つかりません(" + this + ")", e);
+					throw new ActionInstantiationException("Aktionsklasse nicht gefunden (" + this + ")", e);
 				}
 
 			} else if (this.type.equals("移動")) {
@@ -116,13 +116,13 @@ public class ActionBuilder implements IActionBuilder {
 			} else if (this.type.equals("選択")) {
 				return new Select(variables, actions.toArray(new Action[0]));
 			} else {
-				throw new ActionInstantiationException("動作の種類が不明(" + this + ")");
+				throw new ActionInstantiationException("Unbekannter Aktionstyp (" + this + ")");
 			}
 
 		} catch (final AnimationInstantiationException e) {
-			throw new ActionInstantiationException("アニメーションの作成に失敗しました(" + this + ")", e);
+			throw new ActionInstantiationException("Animation konnte nicht erstellt werden (" + this + ")", e);
 		} catch (final VariableException e) {
-			throw new ActionInstantiationException("パラメータの評価に失敗しました(" + this + ")", e);
+			throw new ActionInstantiationException("Parameter konnten nicht ausgewertet werden (" + this + ")", e);
 		}
 	}
 

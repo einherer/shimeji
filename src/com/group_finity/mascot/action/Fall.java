@@ -12,7 +12,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 落ちるアクション.
+ * Aktion zum Fallen.
  */
 public class Fall extends ActionBase {
 
@@ -85,7 +85,7 @@ public class Fall extends ActionBase {
 		this.setModX(this.getModX() + (this.getVelocityX() % 1));
 		this.setModY(this.getModY() + (this.getVelocityY() % 1));
 
-		// 移動量
+		// Bewegungsbetrag
 		int dx = (int) this.getVelocityX() + (int) this.getModX();
 		int dy = (int) this.getVelocityY() + (int) this.getModY();
 
@@ -103,10 +103,10 @@ public class Fall extends ActionBase {
 			int x = start.x+dx*i/dev;
 			int y = start.y+dy*i/dev;
 
-			// マスコットを移動する
+			// Maskottchen verschieben
 			getMascot().setAnchor(new Point(x,y));
 			if ( dy>0 ) {
-				// HACK IEのウィンドウなどが動かされていることがあるので多めにチェック
+				// HACK: Häufiger prüfen, da IE-Fenster oder andere Fenster verschoben worden sein können
 				for( int j = -80; j<=0; ++j ) {
 					getMascot().setAnchor(new Point(x,y+j));
 					if ( getEnvironment().getFloor(true).isOn(getMascot().getAnchor()) ) {
@@ -119,7 +119,7 @@ public class Fall extends ActionBase {
 			}
 		}
 
-		// アニメーションさせる
+		// Animation ausführen
 		getAnimation().next(getMascot(), getTime());
 
 	}

@@ -13,7 +13,7 @@ import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * アクションの共通機能を実装する抽象クラス.
+ * Abstrakte Klasse mit gemeinsamen Funktionen für Aktionen.
  * @author Yuki Yamada
  */
 public abstract class ActionBase implements Action {
@@ -44,9 +44,9 @@ public abstract class ActionBase implements Action {
 	@Override
 	public String toString() {
 		try {
-			return "動作(" + getClass().getSimpleName() + "," + getName() + ")";
+			return "Aktion(" + getClass().getSimpleName() + "," + getName() + ")";
 		} catch (final VariableException e) {
-			return "動作(" + getClass().getSimpleName() + "," + null + ")";
+			return "Aktion(" + getClass().getSimpleName() + "," + null + ")";
 		}
 	}
 
@@ -55,16 +55,16 @@ public abstract class ActionBase implements Action {
 		this.setMascot(mascot);
 		this.setTime(0);
 
-		log.log(Level.INFO, "動作開始({0},{1})", new Object[] { getMascot(), this });
+		log.log(Level.INFO, "Aktion gestartet ({0},{1})", new Object[] { getMascot(), this });
 
-		// スクリプトで使用できるようにmascotとactionを変数マップに追加しておく
+		// mascot und action zur Variablenzuordnung hinzufügen, damit Skripte sie verwenden können
 		this.getVariables().put("mascot", mascot);
 		this.getVariables().put("action", this);
 
-		// 変数の値を初期化
+		// Variablenwerte initialisieren
 		getVariables().init();
 
-		// アニメーションを初期化
+		// Animation initialisieren
 		for (final Animation animation : this.animations) {
 			animation.init();
 		}
@@ -78,10 +78,10 @@ public abstract class ActionBase implements Action {
 
 	private void initFrame() {
 
-		// 変数の値(フレームごと)を初期化
+		// Variablenwerte für jeden Frame initialisieren
 		getVariables().initFrame();
 
-		// アニメーションのフレームを初期化
+		// Animationsframes initialisieren
 		for (final Animation animation : getAnimations()) {
 			animation.initFrame();
 		}
@@ -137,7 +137,7 @@ public abstract class ActionBase implements Action {
 			}
 		}
 
-		log.log(Level.SEVERE, "有効なアニメーションが見つけられませんでした({0},{1})", new Object[] { getMascot(), this });
+		log.log(Level.SEVERE, "Keine gültige Animation gefunden ({0},{1})", new Object[] { getMascot(), this });
 		return null;
 	}
 
