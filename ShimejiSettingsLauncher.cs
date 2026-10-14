@@ -11,6 +11,8 @@ public class SettingsForm : Form
 {
     private ComboBox comboCharacter;
     private CheckBox checkSelfClone;
+    private NumericUpDown numericScale;
+    private TrackBar trackScale;
     private TextBox txtX, txtY, txtW, txtH;
     private TextBox txtTitles;
     private Button btnSave, btnApplyChar, btnApplyRestart, btnResetWindow, btnRestart, btnOpenFolder, btnClose;
@@ -64,7 +66,7 @@ public class SettingsForm : Form
         };
         var lblSub = new Label
         {
-            Text = "Figur, Fensterposition, Fenstertitel und Selbstvermehrung einstellen.",
+            Text = "Figur, Skalierung, Fensterposition, Fenstertitel und Selbstvermehrung einstellen.",
             AutoSize = true,
             Margin = new Padding(0, 0, 0, 10),
             ForeColor = Color.DimGray
@@ -90,6 +92,20 @@ public class SettingsForm : Form
         charPanel.Controls.Add(lblChar, 0, 0);
         charPanel.Controls.Add(comboCharacter, 1, 0);
         charPanel.Controls.Add(btnApplyChar, 2, 0);
+        var lblScale = new Label { Text = "Skalierung:", AutoSize = true, Anchor = AnchorStyles.Left };
+        trackScale = new TrackBar { Minimum = 25, Maximum = 200, Value = 100, TickFrequency = 25, SmallChange = 1, LargeChange = 25, Dock = DockStyle.Fill, Height = 40 };
+        numericScale = new NumericUpDown { Minimum = 25, Maximum = 200, Value = 100, DecimalPlaces = 0, Width = 65 };
+        var scaleInput = new FlowLayoutPanel { AutoSize = true, Anchor = AnchorStyles.Left };
+        scaleInput.Controls.Add(numericScale);
+        scaleInput.Controls.Add(new Label { Text = "%", AutoSize = true, Margin = new Padding(0, 5, 0, 0) });
+        trackScale.ValueChanged += (s, e) => numericScale.Value = trackScale.Value;
+        numericScale.ValueChanged += (s, e) => trackScale.Value = (int)numericScale.Value;
+        charPanel.Controls.Add(lblScale, 0, 1);
+        charPanel.Controls.Add(trackScale, 1, 1);
+        charPanel.Controls.Add(scaleInput, 2, 1);
+        var scaleHint = new Label { Text = "25–200 % · 100 % = Originalgröße · Speichern wirkt auf alle laufenden Figuren.", AutoSize = true, Margin = new Padding(0, 0, 0, 5) };
+        charPanel.Controls.Add(scaleHint, 0, 2);
+        charPanel.SetColumnSpan(scaleHint, 3);
         grpChar.Controls.Add(charPanel);
         mainLayout.Controls.Add(grpChar, 0, 1);
 
@@ -188,6 +204,12 @@ public class SettingsForm : Form
                     string val = trimmed.Substring("selfCloningEnabled=".Length).Trim();
                     checkSelfClone.Checked = val.Equals("true", StringComparison.OrdinalIgnoreCase);
                 }
+                else if (trimmed.StartsWith("scalePercent=", StringComparison.OrdinalIgnoreCase))
+                {
+                    int scale;
+                    if (!int.TryParse(trimmed.Substring("scalePercent=".Length).Trim(), out scale)) scale = 100;
+                    numericScale.Value = Math.Max(25, Math.Min(200, scale));
+                }
             }
         }
 
@@ -220,10 +242,28 @@ public class SettingsForm : Form
 
         File.WriteAllText(WindowConf, HeaderText + "\n" + x + "\n" + y + "\n" + w + "\n" + h + "\n");
         File.WriteAllText(TitlesConf, txtTitles.Text);
-        File.WriteAllText(SettingsProps, "selfCloningEnabled=" + (checkSelfClone.Checked ? "true" : "false") + "\n");
+        var preserved = File.Exists(SettingsProps)
+            ? File.ReadAllLines(SettingsProps).Where(line => {
+                string key = line.Split('=')[0].Trim();
+                return key != "selfCloningEnabled" && key != "scalePercent";
+            }).ToList()
+            : new List<string>();
+        preserved.Add("selfCloningEnabled=" + (checkSelfClone.Checked ? "true" : "false"));
+        preserved.Add("scalePercent=" + (int)numericScale.Value);
+        string tempPath = SettingsProps + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllLines(tempPath, preserved, new System.Text.UTF8Encoding(false));
+            if (File.Exists(SettingsProps)) File.Replace(tempPath, SettingsProps, null);
+            else File.Move(tempPath, SettingsProps);
+        }
+        finally
+        {
+            if (File.Exists(tempPath)) File.Delete(tempPath);
+        }
 
         if (showMessage)
-            MessageBox.Show("Einstellungen wurden gespeichert.", "Hinweis", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Einstellungen wurden gespeichert. Die Skalierung wird auf alle laufenden Figuren angewendet.", "Hinweis", MessageBoxButtons.OK, MessageBoxIcon.Information);
         return true;
     }
 

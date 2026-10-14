@@ -116,7 +116,7 @@ def write_titles_conf(text):
 
 
 def read_settings_props():
-    props = {"selfCloningEnabled": True}
+    props = {"selfCloningEnabled": True, "scalePercent": 100}
     if not os.path.exists(SETTINGS_PROPS):
         return props
     with open(SETTINGS_PROPS, "r", encoding="utf-8", errors="replace") as f:
@@ -125,13 +125,41 @@ def read_settings_props():
             if not line or line.startswith("#") or "=" not in line:
                 continue
             k, v = line.split("=", 1)
-            props[k.strip()] = v.strip().lower() == "true"
+            key = k.strip()
+            if key == "selfCloningEnabled":
+                props[key] = v.strip().lower() == "true"
+            elif key == "scalePercent":
+                try:
+                    props[key] = max(25, min(200, int(v.strip())))
+                except ValueError:
+                    props[key] = 100
     return props
 
 
-def write_settings_props(self_cloning_enabled):
-    with open(SETTINGS_PROPS, "w", encoding="utf-8") as f:
-        f.write("selfCloningEnabled=%s\n" % ("true" if self_cloning_enabled else "false"))
+def write_settings_props(self_cloning_enabled, scale_percent):
+    scale_percent = int(scale_percent)
+    if not 25 <= scale_percent <= 200:
+        raise ValueError("Die Skalierung muss zwischen 25 und 200 Prozent liegen.")
+    lines = []
+    if os.path.exists(SETTINGS_PROPS):
+        with open(SETTINGS_PROPS, "r", encoding="utf-8") as f:
+            lines = [line for line in f if line.split("=", 1)[0].strip()
+                     not in ("selfCloningEnabled", "scalePercent")]
+    content = "".join(lines).rstrip("\n")
+    if content:
+        content += "\n"
+    content += "selfCloningEnabled=%s\nscalePercent=%d\n" % (
+        "true" if self_cloning_enabled else "false", scale_percent)
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8",
+                                         dir=os.path.dirname(SETTINGS_PROPS), delete=False) as f:
+            temp_path = f.name
+            f.write(content)
+        os.replace(temp_path, SETTINGS_PROPS)
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            os.unlink(temp_path)
 
 
 def restart_shimeji():
@@ -160,6 +188,8 @@ class App(tk.Tk):
         self.option_add("*Font", "Sans 10")
         self.character_var = tk.StringVar()
         self.self_clone_var = tk.BooleanVar(value=True)
+        self.scale_var = tk.StringVar(value="100")
+        self._syncing_scale = False
         self._build()
         self.load_values()
 
@@ -171,7 +201,7 @@ class App(tk.Tk):
         top.grid(row=0, column=0, sticky="ew")
         top.grid_columnconfigure(0, weight=1)
         ttk.Label(top, text="Shimeji-Einstellungen", font=("Sans", 14, "bold")).grid(row=0, column=0, sticky="w")
-        ttk.Label(top, text="Figur, Fensterposition, Fenstertitel und Selbstvermehrung einstellen.").grid(row=1, column=0, sticky="w", pady=(4, 10))
+        ttk.Label(top, text="Figur, Skalierung, Fensterposition, Fenstertitel und Selbstvermehrung einstellen.").grid(row=1, column=0, sticky="w", pady=(4, 10))
 
         chars = ttk.LabelFrame(self, text="Figur")
         chars.grid(row=1, column=0, sticky="ew", pady=(0, 10))
@@ -180,6 +210,18 @@ class App(tk.Tk):
         self.character_combo = ttk.Combobox(chars, textvariable=self.character_var, state="readonly", values=list_characters())
         self.character_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
         ttk.Button(chars, text="Figur übernehmen", command=self.apply_character_only).grid(row=0, column=2, sticky="e", padx=(0, 10), pady=10)
+
+        ttk.Label(chars, text="Skalierung").grid(row=1, column=0, sticky="w", padx=10, pady=(0, 8))
+        self.scale_slider = ttk.Scale(chars, from_=25, to=200, command=self._scale_from_slider)
+        self.scale_slider.grid(row=1, column=1, sticky="ew", padx=(0, 10), pady=(0, 8))
+        scale_input = ttk.Frame(chars)
+        scale_input.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(0, 8))
+        ttk.Spinbox(scale_input, from_=25, to=200, increment=1, textvariable=self.scale_var,
+                    width=5).pack(side="left")
+        ttk.Label(scale_input, text=" %").pack(side="left")
+        self.scale_var.trace_add("write", self._scale_from_input)
+        ttk.Label(chars, text="25–200 % · 100 % = Originalgröße · Speichern wirkt auf alle laufenden Figuren.").grid(
+            row=2, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
 
         behavior = ttk.LabelFrame(self, text="Verhalten")
         behavior.grid(row=2, column=0, sticky="ew", pady=(0, 10))
@@ -242,6 +284,22 @@ class App(tk.Tk):
                 row=index // 3, column=index % 3, sticky="ew", padx=4, pady=4
             )
 
+    def _scale_from_slider(self, value):
+        if not self._syncing_scale:
+            self.scale_var.set(str(round(float(value))))
+
+    def _scale_from_input(self, *_):
+        try:
+            value = int(self.scale_var.get())
+        except ValueError:
+            return
+        if 25 <= value <= 200:
+            self._syncing_scale = True
+            try:
+                self.scale_slider.set(value)
+            finally:
+                self._syncing_scale = False
+
     def load_values(self):
         chars = list_characters()
         self.character_combo["values"] = chars
@@ -251,6 +309,7 @@ class App(tk.Tk):
         self.character_var.set(current)
         props = read_settings_props()
         self.self_clone_var.set(bool(props.get("selfCloningEnabled", True)))
+        self.scale_var.set(str(props.get("scalePercent", 100)))
         vals = read_window_conf()
         for key, val in zip(["x", "y", "w", "h"], vals):
             self.entries[key].delete(0, "end")
@@ -265,10 +324,17 @@ class App(tk.Tk):
         except ValueError:
             messagebox.showerror("Ungültige Zahl", "Die vier Werte für window.conf müssen ganze Zahlen sein.")
             return False
+        try:
+            scale_percent = int(self.scale_var.get().strip())
+            if not 25 <= scale_percent <= 200:
+                raise ValueError
+        except ValueError:
+            messagebox.showerror("Ungültige Skalierung", "Bitte eine ganze Zahl von 25 bis 200 Prozent eingeben.")
+            return False
         write_window_conf(vals)
         write_titles_conf(self.text.get("1.0", "end").rstrip() + "\n" if self.text.get("1.0", "end").strip() else "")
-        write_settings_props(self.self_clone_var.get())
-        messagebox.showinfo("Gespeichert", "Einstellungen gespeichert.")
+        write_settings_props(self.self_clone_var.get(), scale_percent)
+        messagebox.showinfo("Gespeichert", "Einstellungen gespeichert. Die Skalierung wird auf alle laufenden Figuren angewendet.")
         return True
 
     def apply_character_only(self):

@@ -149,6 +149,8 @@ public class Manager {
 	 */
 	private void tick() {
 
+		MascotScale.refresh();
+
 		// Zuerst Umgebungsinformationen aktualisieren
 		NativeFactory.getInstance().getEnvironment().tick();
 
