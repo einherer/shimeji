@@ -18,13 +18,13 @@ import com.sun.jna.platform.unix.X11.GC;
 import com.sun.jna.ptr.IntByReference;
 
 /**
- * The image window with alpha.
- * {@link #setImage(WindowsNativeImage)} set in {@link WindowsNativeImage} can be displayed on the desktop.
+ * Bildfenster mit Alpha-Transparenz.
+ * Mit setImage() wird das anzuzeigende Bild für den Desktop festgelegt.
  * 
- * {@link #setAlpha(int)} may be specified when the concentration of view.
+ * Mit {@link #setAlpha(int)} kann die Deckkraft eingestellt werden.
  *
- * Original Author: Yuki Yamada of Group Finity (http://www.group-finity.com/Shimeji/)
- * Currently developed by Shimeji-ee Group.
+ * Ursprünglicher Autor: Yuki Yamada von Group Finity (http://www.group-finity.com/Shimeji/)
+ * Wird derzeit von der Shimeji-ee Group entwickelt.
  */
 class X11TranslucentWindow extends JWindow implements TranslucentWindow {
 
@@ -34,7 +34,7 @@ class X11TranslucentWindow extends JWindow implements TranslucentWindow {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * To view images.
+	 * Zur Anzeige von Bildern.
 	 */
 	private X11NativeImage image;
 	
@@ -134,7 +134,7 @@ class X11TranslucentWindow extends JWindow implements TranslucentWindow {
         } catch (Exception e) {}
 		if (!alphaWindow.isVisible()) {
 			alphaWindow.setVisible(true);
-			// hack for initial refresh (X11)
+			// Behelfslösung für die erste Aktualisierung (X11)
 			repaint();
 		} 
     }

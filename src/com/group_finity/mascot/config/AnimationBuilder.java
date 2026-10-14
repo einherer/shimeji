@@ -30,14 +30,14 @@ public class AnimationBuilder {
 	public AnimationBuilder(final Entry animationNode) throws IOException {
 		this.condition = animationNode.getAttribute("条件") == null ? "true" : animationNode.getAttribute("条件");
 
-		log.log(Level.INFO, "アニメーション読み込み開始");
+		log.log(Level.INFO, "Animation wird geladen");
 
 		for (final Entry frameNode : animationNode.getChildren()) {
 
 			this.getPoses().add(loadPose(frameNode));
 		}
 
-		log.log(Level.INFO, "アニメーション読み込み完了");
+		log.log(Level.INFO, "Animation wurde geladen");
 	}
 
 	private Pose loadPose(final Entry frameNode) throws IOException {
@@ -56,11 +56,11 @@ public class AnimationBuilder {
 		Point move = new Point(Integer.parseInt(moveCoordinates[0]), Integer.parseInt(moveCoordinates[1]));
 		
 		/**
-		 * In order to use standard Actions.xml files, every velocity needs to be halved and
-		 * every frame duration must be doubled. This is due to the halved tick interval compared
-		 * to the original program. Velocities of 1 cannot be halved into zero. We will instead
-		 * double the amount of frames for those animations and move at the original velocity of
-		 * 1 on every second frame.
+		 * Für Standarddateien vom Typ Actions.xml muss jede Geschwindigkeit halbiert und
+		 * muss jede Frame-Dauer verdoppelt werden. Ursache ist das halbierte Tick-Intervall gegenüber
+		 * dem ursprünglichen Programm. Geschwindigkeit 1 darf nicht auf 0 halbiert werden. Stattdessen wird
+		 * die Anzahl der Frames für diese Animationen verdoppeln und mit der ursprünglichen Geschwindigkeit von
+		 * 1 in jedem zweiten Frame.
 		 */
 		int newx = 0;
 		int newy = 0;
@@ -69,7 +69,7 @@ public class AnimationBuilder {
 		boolean oneX = false;
 		boolean oneY = false;
 		
-	// Check if either velocity is 1
+	// Prüfen, ob eine der Geschwindigkeiten 1 beträgt
 		if (Math.abs(newx) != 1) {
 			newx = newx/2;
 		} else {
@@ -83,9 +83,9 @@ public class AnimationBuilder {
 		}
 		
 		int duration = Integer.parseInt(durationText);
-	// In case of a 1 velocity, call recursively to create the extra
-	// frames and alternate between velocities of 1 and 0. Global
-	// counter variable tracks the process.
+	// Bei Geschwindigkeit 1 rekursiv aufrufen, um die zusätzlichen
+	// Frames zu erzeugen und zwischen den Geschwindigkeiten 1 und 0 zu wechseln. Eine globale
+	// Zählvariable verfolgt den Ablauf.
 		if (oneX || oneY) {
 			if (tot == 0) tot = duration*2; 
 			if (cnt < tot) {
@@ -106,7 +106,7 @@ public class AnimationBuilder {
 		move = new Point(newx,newy); 
 		final Pose pose = new Pose(image, move.x, move.y, duration);
 
-		log.log(Level.INFO, "姿勢読み込み({0})", pose);
+		log.log(Level.INFO, "Pose wird geladen ({0})", pose);
 
 		return pose;
 
@@ -116,7 +116,7 @@ public class AnimationBuilder {
 		try {
 			return new Animation(Variable.parse(this.getCondition()), this.getPoses().toArray(new Pose[0]));
 		} catch (final VariableException e) {
-			throw new AnimationInstantiationException("条件の評価に失敗しました", e);
+			throw new AnimationInstantiationException("Bedingung konnte nicht ausgewertet werden", e);
 		}
 	}
 

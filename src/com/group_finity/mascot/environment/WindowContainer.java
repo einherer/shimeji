@@ -6,21 +6,21 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 /*
- * Hashtable extension storing XWindow ID's and Area objects
- * representing the window dimensions. Methods called by
- * mascots (via MascotEnvironment) when choosing new actions
- * to check whether they're on a border of any kind.
+ * Hashtable-Erweiterung zum Speichern von XWindow-IDs und Area-Objekten,
+ * die die Fensterabmessungen darstellen. Die Methoden werden von
+ * Maskottchen über MascotEnvironment aufgerufen, wenn neue Aktionen gewählt werden
+ * um zu prüfen, ob sie sich auf einem Rand befinden.
  */
 
 public class WindowContainer extends Hashtable<Number,Area> {
 	
 /*
- * onBorder, getBorder methods - Called by mascots when 
- * determining the next action. Iterate through all windows,
- * get the specific border type and call its isOn() to 
- * check whether the mascot anchor is on the border. One 
- * method for plain boolean checks, one for getting the border
- * when needing to decide movement destinations based on it.
+ * onBorder, getBorder – Werden von Maskottchen aufgerufen, wenn
+ * die nächste Aktion bestimmt wird. Alle Fenster durchlaufen,
+ * den jeweiligen Randtyp ermitteln und dessen isOn()-Methode aufrufen; diese
+ * prüft, ob der Ankerpunkt des Maskottchens auf dem Rand liegt. Eine Methode
+ * für reine Wahrheitswertprüfungen, eine zum Abrufen des Randes,
+ * wenn daraus Bewegungsziele bestimmt werden müssen.
  *
  */
 	public boolean onLeft(final Point p) {

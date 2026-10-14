@@ -11,16 +11,16 @@ import javax.swing.ImageIcon;
 import com.group_finity.mascot.image.NativeImage;
 
 /**
- * {@link GenericTranslucentWindow} に使用可能なα値つき画像.
+ * Bild mit Alpha-Werten zur Verwendung in {@link GenericTranslucentWindow}.
  * 
- * {@link GenericTranslucentWindow} に使用できるのは Windows ビットマップだけなので、
- * 既存の {@link BufferedImage} から Windows ビットマップにピクセルをコピーする.
+ * Da {@link GenericTranslucentWindow} nur Windows-Bitmaps unterstützt, werden
+ * Pixel aus einem vorhandenen {@link BufferedImage} in eine Windows-Bitmap kopiert.
  * 
  */
 class GenericNativeImage implements NativeImage{
 
 	/**
-	 * Java イメージオブジェクト.
+	 * Java-Bildobjekt.
 	 */
 	private final BufferedImage managedImage;
 	

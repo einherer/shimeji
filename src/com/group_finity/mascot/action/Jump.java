@@ -11,7 +11,7 @@ import com.group_finity.mascot.script.VariableMap;
 
 
 /**
- * ジャンプするアクション.
+ * Aktion zum Springen.
  */
 public class Jump extends ActionBase {
 

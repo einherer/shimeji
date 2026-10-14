@@ -12,7 +12,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * ドラッグされてるアクション.
+ * Aktion während des Ziehens mit der Maus.
  */
 public class Dragged extends ActionBase {
 
@@ -65,13 +65,13 @@ public class Dragged extends ActionBase {
 		this.setFootDx((this.getFootDx() + ((newX - this.getFootX()) * 0.1)) * 0.8);
 		this.setFootX(this.getFootX() + this.getFootDx());
 
-		// アニメーションの条件に足の位置が含まれる可能性があるので変数に入れておく
+		// Fußposition als Variable speichern, da sie in Animationsbedingungen vorkommen kann
 		putVariable(VARIABLE_FOOTX, this.getFootX());
 
-		// アニメーションさせる
+		// Animation ausführen
 		getAnimation().next(getMascot(), getTime());
 
-		// マスコットの位置をマウスカーソルに合わせる
+		// Position des Maskottchens an den Mauszeiger anpassen
 		getMascot().setAnchor(new Point(cursor.getX(), cursor.getY() + 120));
 	}
 

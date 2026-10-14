@@ -12,18 +12,18 @@ import com.group_finity.mascot.image.NativeImage;
 
 
 /**
- * (@link WindowsTranslucentWindow) a value that can be used with images.
+ * Bild mit Alpha-Werten zur Verwendung in einem durchscheinenden Fenster.
  * 
- * {@link WindowsTranslucentWindow} is available because only Windows bitmap
- * {@link BufferedImage} existing copy pixels from a Windows bitmap.
+ * Das Bild stellt die Pixeldaten für das durchscheinende Fenster bereit.
+ * Die Pixeldaten werden aus einem vorhandenen {@link BufferedImage} übernommen.
  * 
- * Original Author: Yuki Yamada of Group Finity (http://www.group-finity.com/Shimeji/)
- * Currently developed by Shimeji-ee Group.
+ * Ursprünglicher Autor: Yuki Yamada von Group Finity (http://www.group-finity.com/Shimeji/)
+ * Wird derzeit von der Shimeji-ee Group entwickelt.
  */
 class X11NativeImage implements NativeImage {
 
 	/**
-	 * Java Image object.
+	 * Java-Bildobjekt.
 	 */
 	private final BufferedImage managedImage;
 	

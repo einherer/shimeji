@@ -16,7 +16,7 @@ import com.group_finity.mascot.environment.Wall;
 
 
 /**
- * 枠にくっついて動くアクションの基底クラス.
+ * Basisklasse für Aktionen, die sich an einem Rand entlangbewegen.
  * @author Yuki Yamada
  */
 public abstract class BorderedAction extends ActionBase {
@@ -63,7 +63,7 @@ public abstract class BorderedAction extends ActionBase {
 	protected void tick() throws LostGroundException, VariableException {
 
 		if (getBorder() != null) {
-			// 枠が動いているかも
+			// Der Rand könnte sich bewegt haben
 			getMascot().setAnchor(getBorder().move(getMascot().getAnchor()));
 		}
 	}

@@ -20,8 +20,8 @@ public class ComplexArea {
 
 	public void set(String name, final Rectangle value) {
 
-		// 完全に一致しているやつがいるなら除外すべき？
-		// ミラーリングしている時に発生するっぽい
+		// Sollten vollständig übereinstimmende Einträge ausgeschlossen werden?
+		// Tritt offenbar bei gespiegelten Anzeigen auf
 
 		for (Area area : areas.values()) {
 			if ( area.getLeft()==value.x &&

@@ -10,7 +10,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 複数のアクションを直列に一つにまとめたアクションの基底クラス.
+ * Basisklasse für Aktionen, die mehrere Aktionen zu einer Abfolge zusammenfassen.
  */
 public abstract class ComplexAction extends ActionBase {
 
@@ -23,7 +23,7 @@ public abstract class ComplexAction extends ActionBase {
 	public ComplexAction(final VariableMap params, final Action... actions) {
 		super(new ArrayList<Animation>(), params);
 		if (actions.length == 0) {
-			throw new IllegalArgumentException("actions.length==0");
+			throw new IllegalArgumentException("Die Aktionsliste darf nicht leer sein");
 		}
 
 		this.actions = actions;

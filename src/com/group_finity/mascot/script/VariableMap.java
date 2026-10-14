@@ -69,7 +69,7 @@ public class VariableMap extends AbstractMap<String, Object> implements Bindings
 
 						@Override
 						public Object setValue(final Object value) {
-							throw new UnsupportedOperationException("setValue is not supported");
+							throw new UnsupportedOperationException("setValue wird nicht unterstützt");
 						}
 
 					};

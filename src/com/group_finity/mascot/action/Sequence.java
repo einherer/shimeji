@@ -6,7 +6,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 複数のアクションを直列に一つにまとめたアクション.
+ * Fasst mehrere Aktionen zu einer Abfolge zusammen.
  */
 public class Sequence extends ComplexAction {
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 
 /**
- * Java では取得が難しい環境情報をJNIを使用して取得する.
+ * Ermittelt über JNI Umgebungsinformationen, die in Java schwer zugänglich sind.
  */
 class GenericEnvironment extends Environment {
 

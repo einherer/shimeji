@@ -17,7 +17,7 @@ import com.group_finity.mascot.exception.LostGroundException;
 import com.group_finity.mascot.exception.VariableException;
 
 /**
- * サンプル用の単純な振る舞い.
+ * Einfaches Beispielverhalten.
  */
 public class UserBehavior implements Behavior {
 	private static final Logger log = Logger.getLogger(UserBehavior.class.getName());
@@ -44,7 +44,7 @@ public class UserBehavior implements Behavior {
 
 	@Override
 	public String toString() {
-		return "行動(" + getName() + ")";
+		return "Verhalten(" + getName() + ")";
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class UserBehavior implements Behavior {
 
 		this.setMascot(mascot);
 
-		log.log(Level.INFO, "行動開始({0},{1})", new Object[] { this.getMascot(), this });
+		log.log(Level.INFO, "Verhalten gestartet ({0},{1})", new Object[] { this.getMascot(), this });
 
 		try {
 			getAction().init(mascot);
@@ -60,11 +60,11 @@ public class UserBehavior implements Behavior {
 				try {
 					mascot.setBehavior(this.getConfiguration().buildBehavior(getName(), mascot));
 				} catch (final BehaviorInstantiationException e) {
-					throw new CantBeAliveException("次の行動の初期化に失敗しました", e);
+					throw new CantBeAliveException("Nächstes Verhalten konnte nicht initialisiert werden", e);
 				}
 			}
 		} catch (final VariableException e) {
-			throw new CantBeAliveException("変数の評価でエラーが発生しました", e);
+			throw new CantBeAliveException("Fehler beim Auswerten der Variablen", e);
 		}
 
 	}
@@ -82,36 +82,36 @@ public class UserBehavior implements Behavior {
 	}
 
 	/**
-	 * マウスが押された.
-	 * 左ボタンだったらドラッグ開始.
+	 * Maustaste wurde gedrückt.
+	 * Bei linker Maustaste das Ziehen beginnen.
 	 * @throws CantBeAliveException 
 	 */
 	public synchronized void mousePressed(final MouseEvent event) throws CantBeAliveException {
 
 		if (SwingUtilities.isLeftMouseButton(event)) {
-			// ドラッグ開始のお知らせ
+			// Beginn des Ziehens melden
 			try {
 				getMascot().setBehavior(this.getConfiguration().buildBehavior(BEHAVIORNAME_DRAGGED));
 			} catch (final BehaviorInstantiationException e) {
-				throw new CantBeAliveException("ドラッグ行動の初期化に失敗しました", e);
+				throw new CantBeAliveException("Ziehverhalten konnte nicht initialisiert werden", e);
 			}
 		}
 
 	}
 
 	/**
-	 * マウスが離れた.
-	 * 左ボタンだったらドラッグ終了.
+	 * Mauszeiger hat den Bereich verlassen.
+	 * Bei linker Maustaste das Ziehen beenden.
 	 * @throws CantBeAliveException 
 	 */
 	public synchronized void mouseReleased(final MouseEvent event) throws CantBeAliveException {
 
 		if (SwingUtilities.isLeftMouseButton(event)) {
-			// ドラッグ終了のお知らせ
+			// Ende des Ziehens melden
 			try {
 				getMascot().setBehavior(this.getConfiguration().buildBehavior(BEHAVIORNAME_THROWN));
 			} catch (final BehaviorInstantiationException e) {
-				throw new CantBeAliveException("ドロップ行動の初期化に失敗しました", e);
+				throw new CantBeAliveException("Verhalten beim Loslassen konnte nicht initialisiert werden", e);
 			}
 		}
 
@@ -127,13 +127,13 @@ public class UserBehavior implements Behavior {
 
 			if (getAction().hasNext()) {
 
-				// / IE をちゃんと持てているかチェック
+				// / Prüfen, ob das IE-Fenster noch gehalten wird
 				if ((getMascot().getBounds().getX() + getMascot().getBounds().getWidth() <= getEnvironment().getScreen()
 						.getLeft())
 						|| (getEnvironment().getScreen().getRight() <= getMascot().getBounds().getX())
 						|| (getEnvironment().getScreen().getBottom() <= getMascot().getBounds().getY())) {
 
-					log.log(Level.INFO, "画面の外に出た({0},{1})", new Object[] { getMascot(), this });
+					log.log(Level.INFO, "Bildschirmbereich verlassen ({0},{1})", new Object[] { getMascot(), this });
 
 					getMascot().setAnchor(
 							new Point((int) (Math.random() * (getEnvironment().getScreen().getRight() - getEnvironment()
@@ -143,29 +143,29 @@ public class UserBehavior implements Behavior {
 					try {
 						getMascot().setBehavior(this.getConfiguration().buildBehavior(BEHAVIORNAME_FALL));
 					} catch (final BehaviorInstantiationException e) {
-						throw new CantBeAliveException("落ちる行動の初期化に失敗しました", e);
+						throw new CantBeAliveException("Fallverhalten konnte nicht initialisiert werden", e);
 					}
 				}
 
 			} else {
-				log.log(Level.INFO, "行動完了({0},{1})", new Object[] { getMascot(), this });
+				log.log(Level.INFO, "Verhalten abgeschlossen ({0},{1})", new Object[] { getMascot(), this });
 
 				try {
 					getMascot().setBehavior(this.getConfiguration().buildBehavior(getName(), getMascot()));
 				} catch (final BehaviorInstantiationException e) {
-					throw new CantBeAliveException("次の行動の初期化に失敗しました", e);
+					throw new CantBeAliveException("Nächstes Verhalten konnte nicht initialisiert werden", e);
 				}
 			}
 		} catch (final LostGroundException e) {
-			log.log(Level.INFO, "地面から離れた({0},{1})", new Object[] { getMascot(), this });
+			log.log(Level.INFO, "Bodenkontakt verloren ({0},{1})", new Object[] { getMascot(), this });
 
 			try {
 				getMascot().setBehavior(this.getConfiguration().buildBehavior(BEHAVIORNAME_FALL));
 			} catch (final BehaviorInstantiationException ex) {
-				throw new CantBeAliveException("落ちる行動の初期化に失敗しました", ex);
+				throw new CantBeAliveException("Fallverhalten konnte nicht initialisiert werden", ex);
 			}
 		} catch (final VariableException e) {
-			throw new CantBeAliveException("変数の評価でエラーが発生しました", e);
+			throw new CantBeAliveException("Fehler beim Auswerten der Variablen", e);
 		}
 
 	}

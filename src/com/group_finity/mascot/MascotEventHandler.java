@@ -21,8 +21,8 @@ public class MascotEventHandler implements MouseListener {
 	private static final Logger log = Logger.getLogger(MascotEventHandler.class.getName());
 
 	/**
-	 * トレイアイコンの分のメニューも表示するかどうか.
-	 * トレイアイコンの作成に失敗した時はここでトレイアイコンの分のメニューも表示する必要がある.
+	 * Ob die Menüeinträge des Taskleistensymbols ebenfalls angezeigt werden sollen.
+	 * Wenn kein Taskleistensymbol erstellt werden konnte, müssen dessen Menüeinträge hier ebenfalls angezeigt werden.
 	 */
 	private static boolean showSystemTrayMenu = false;
 
@@ -42,12 +42,12 @@ public class MascotEventHandler implements MouseListener {
 
 	public void mousePressed(final MouseEvent event) {
 
-		// マウスが押されたらドラッグアニメーションに切り替える
+		// Beim Drücken der Maustaste zur Ziehanimation wechseln
 		if (getMascot().getBehavior() != null) {
 			try {
 				getMascot().getBehavior().mousePressed(event);
 			} catch (final CantBeAliveException e) {
-				log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+				log.log(Level.SEVERE, "Maskottchen kann in dieser Situation nicht weiterlaufen", e);
 				getMascot().dispose();
 			}
 		}
@@ -68,7 +68,7 @@ public class MascotEventHandler implements MouseListener {
 				try {
 					getMascot().getBehavior().mouseReleased(event);
 				} catch (final CantBeAliveException e) {
-					log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+					log.log(Level.SEVERE, "Maskottchen kann in dieser Situation nicht weiterlaufen", e);
 					getMascot().dispose();
 				}
 			}
@@ -95,7 +95,7 @@ public class MascotEventHandler implements MouseListener {
 			}
 		});
 
-		final JMenuItem disposeMenu = new JMenuItem("Quit");
+		final JMenuItem disposeMenu = new JMenuItem("Beenden");
 		disposeMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -107,8 +107,8 @@ public class MascotEventHandler implements MouseListener {
 
 		popup.add(new JSeparator());
 
-		final JMenuItem openWindowConfMenu = new JMenuItem("Settings: Open window.conf");
-		final JMenuItem openSettingsGuiMenu = new JMenuItem("Settings: Open Settings GUI");
+		final JMenuItem openWindowConfMenu = new JMenuItem("Einstellungen: window.conf öffnen");
+		final JMenuItem openSettingsGuiMenu = new JMenuItem("Einstellungen öffnen");
 		openSettingsGuiMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -123,7 +123,7 @@ public class MascotEventHandler implements MouseListener {
 			}
 		});
 
-		final JMenuItem openTitlesConfMenu = new JMenuItem("Settings: Open titles.conf");
+		final JMenuItem openTitlesConfMenu = new JMenuItem("Einstellungen: titles.conf öffnen");
 		openTitlesConfMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -131,7 +131,7 @@ public class MascotEventHandler implements MouseListener {
 			}
 		});
 
-		final JMenuItem openAppFolderMenu = new JMenuItem("Settings: Open app folder");
+		final JMenuItem openAppFolderMenu = new JMenuItem("Einstellungen: Programmordner öffnen");
 		openAppFolderMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -139,7 +139,7 @@ public class MascotEventHandler implements MouseListener {
 			}
 		});
 
-		final JMenuItem resetWindowConfMenu = new JMenuItem("Settings: Reset window.conf");
+		final JMenuItem resetWindowConfMenu = new JMenuItem("Einstellungen: window.conf zurücksetzen");
 		resetWindowConfMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -157,40 +157,40 @@ public class MascotEventHandler implements MouseListener {
 
 			popup.add(new JSeparator());
 
-			// 「増やす」メニューアイテム
-			final JMenuItem increaseMenu = new JMenuItem("Add 1");
+			// Menüeintrag „Maskottchen hinzufügen“
+			final JMenuItem increaseMenu = new JMenuItem("Maskottchen hinzufügen");
 			increaseMenu.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent event) {
 					Main.getInstance().createMascot();
 				}
 			});
 
-			// 「あつまれ！」メニューアイテム
-			final JMenuItem gatherMenu = new JMenuItem("Gather！");
+			// Menüeintrag „Versammeln“
+			final JMenuItem gatherMenu = new JMenuItem("Versammeln!");
 			gatherMenu.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent event) {
 					getMascot().getManager().setBehaviorAll(Main.getInstance().getConfiguration(), Main.BEHAVIOR_GATHER);
 				}
 			});
 
-			// 「一匹だけ残す」メニューアイテム
-			final JMenuItem oneMenu = new JMenuItem("Reduce to 1");
+			// Menüeintrag „Nur eines behalten“
+			final JMenuItem oneMenu = new JMenuItem("Nur eines behalten");
 			oneMenu.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent event) {
 					getMascot().getManager().remainOne();
 				}
 			});
 
-			// 「IEを元に戻す」メニューアイテム
-		/*	final JMenuItem restoreMenu = new JMenuItem("IEを元に戻す");
+			// Menüeintrag „IE-Fenster wiederherstellen“
+		/*	final JMenuItem restoreMenu = new JMenuItem("IE-Fenster wiederherstellen");
 			restoreMenu.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent event) {
 					NativeFactory.getInstance().getEnvironment().restoreIE();
 				}
 			}); */
 
-			// 「全部ばいばい」メニューアイテム
-			final JMenuItem closeMenu = new JMenuItem("Quit");
+			// Menüeintrag „Alle entfernen“
+			final JMenuItem closeMenu = new JMenuItem("Beenden");
 			closeMenu.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
 					Main.getInstance().exit();
@@ -210,19 +210,19 @@ public class MascotEventHandler implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO 自動生成されたメソッド・スタブ
+		// TODO: Automatisch erzeugter Methodenrumpf
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO 自動生成されたメソッド・スタブ
+		// TODO: Automatisch erzeugter Methodenrumpf
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO 自動生成されたメソッド・スタブ
+		// TODO: Automatisch erzeugter Methodenrumpf
 
 	}
 

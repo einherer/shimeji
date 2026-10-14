@@ -14,7 +14,7 @@ public class Animation {
 	public Animation(final Variable condition, final Pose... poses) {
 
 		if (poses.length == 0) {
-			throw new IllegalArgumentException("poses.length==0");
+			throw new IllegalArgumentException("Die Posenliste darf nicht leer sein");
 		}
 
 		this.condition = condition;

@@ -7,32 +7,32 @@ import com.group_finity.mascot.exception.CantBeAliveException;
 
 
 /**
- * マスコットの長期的な振る舞いをあらわすオブジェクト.
+ * Objekt, das das langfristige Verhalten eines Maskottchens beschreibt.
  * 
- * {@link Mascot#setBehavior(Behavior)} で使用する.
+ * Wird von {@link Mascot#setBehavior(Behavior)} verwendet.
  */
 public interface Behavior {
 
 	/**
-	 * 行動を開始する時に呼び出す.
-	 * @param mascot 関連付けるマスコット.
+	 * Wird beim Start eines Verhaltens aufgerufen.
+	 * @param mascot Zugeordnetes Maskottchen.
 	 */
 	public void init(Mascot mascot) throws CantBeAliveException;
 
 	/**
-	 * マスコットを次のコマに進める.
+	 * Maskottchen zum nächsten Frame weiterschalten.
 	 */
 	public void next() throws CantBeAliveException;
 	
 	/**
-	 * マウスボタンが押された.
-	 * @param mascot マウスクリックされたマスコット.
+	 * Maustaste wurde gedrückt.
+	 * @param mascot Angeklicktes Maskottchen.
 	 */
 	public void mousePressed(MouseEvent e) throws CantBeAliveException;
 
 	/**
-	 * マウスが放された.
-	 * @param mascot マウスが放されたマスコット.
+	 * Maustaste wurde losgelassen.
+	 * @param mascot Maskottchen, bei dem die Maustaste losgelassen wurde.
 	 */
 	public void mouseReleased(MouseEvent e) throws CantBeAliveException;
 }

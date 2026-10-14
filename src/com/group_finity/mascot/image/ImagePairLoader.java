@@ -9,23 +9,23 @@ import javax.imageio.ImageIO;
 
 
 /**
- *　画像ペアを読み込む.
+ *　Bildpaar laden.
  */
 public class ImagePairLoader {
 
 	/**
-	 * 画像ペアを読み込む.
+	 * Bildpaar laden.
 	 *
-	 * 左向き画像を読み込んで、右向き画像を自動生成する.
+	 * Nach links gerichtetes Bild laden und nach rechts gerichtetes Bild automatisch erzeugen.
 	 *
-	 * @param name 読み込みたい左向き画像.
-	 * @param center 画像の中央座標.
-	 * @return 読み込んだ画像ペア.
+	 * @param name Zu ladendes Bild mit Blickrichtung nach links.
+	 * @param center Mittelpunkt des Bildes.
+	 * @return Geladenes Bildpaar.
 	 */
 	public static ImagePair load(final String name, final Point center) throws IOException {
 
-		// flip では半透明にならない画像があるらしいので
-		// shime1.png に対して shime1-r.png を反転画像として使用するようにして回避。
+		// Da manche Bilder beim Spiegeln offenbar ihre Transparenz verlieren,
+		// wird für shime1.png das separat gespiegelte Bild shime1-r.png verwendet.
 		String rightName = name.replaceAll("¥¥.[a-zA-Z]+$", "-r$0");
 
 		final BufferedImage leftImage = ImageIO.read(ImagePairLoader.class.getResource(name));
@@ -47,9 +47,9 @@ public class ImagePairLoader {
 	}
 
 	/**
-	 * 画像を左右反転させる.
-	 * @param src 左右反転したい画像
-	 * @return　左右反転した
+	 * Bild horizontal spiegeln.
+	 * @param src Horizontal zu spiegelndes Bild
+	 * @return Horizontal gespiegeltes Bild
 	 */
 	private static BufferedImage flip(final BufferedImage src) {
 

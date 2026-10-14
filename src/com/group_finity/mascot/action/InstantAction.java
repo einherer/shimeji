@@ -9,7 +9,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * マスコットの状態を変更するだけで一瞬で終わるアクションの基底クラス.
+ * Basisklasse für sofort abgeschlossene Aktionen, die nur den Maskottchenzustand ändern.
  * @author Yuki Yamada
  */
 public abstract class InstantAction extends ActionBase {

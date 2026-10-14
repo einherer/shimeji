@@ -11,7 +11,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 移動するアクション.
+ * Aktion zum Bewegen.
  * @author Yuki Yamada
  */
 public class Move extends BorderedAction {
@@ -40,14 +40,14 @@ public class Move extends BorderedAction {
 		boolean noMoveY = false;
 
 		if (targetX != Integer.MIN_VALUE) {
-			// X 方向に動く必要があるか？
+			// Ist eine Bewegung in X-Richtung erforderlich?
 			if (getMascot().getAnchor().x == targetX) {
 				noMoveX = true;
 			}
 		}
 
 		if (targetY != Integer.MIN_VALUE) {
-			// Y 方向に動く必要があるか？
+			// Ist eine Bewegung in Y-Richtung erforderlich?
 			if (getMascot().getAnchor().y == targetY) {
 				noMoveY = true;
 			}
@@ -62,8 +62,8 @@ public class Move extends BorderedAction {
 		super.tick();
 
 		if ((getBorder() != null) && !getBorder().isOn(getMascot().getAnchor())) {
-			// 壁から離れてしまった
-			log.log(Level.INFO, "枠を見失った({0},{1})", new Object[] { getMascot(), this });
+			// Wandkontakt verloren
+			log.log(Level.INFO, "Randkontakt verloren ({0},{1})", new Object[] { getMascot(), this });
 			throw new LostGroundException();
 		}
 
@@ -81,18 +81,18 @@ public class Move extends BorderedAction {
 			down = getMascot().getAnchor().y < targetY;
 		}
 
-		// アニメーションさせる
+		// Animation ausführen
 		getAnimation().next(getMascot(), getTime());
 
 		if (targetX != DEFAULT_TARGETX) {
-			// 行き過ぎた分戻す
+			// überschüssige Bewegung zurücknehmen
 			if ((getMascot().isLookRight() && (getMascot().getAnchor().x >= targetX))
 					|| (!getMascot().isLookRight() && (getMascot().getAnchor().x <= targetX))) {
 				getMascot().setAnchor(new Point(targetX, getMascot().getAnchor().y));
 			}
 		}
 		if (targetY != DEFAULT_TARGETY) {
-			// 行き過ぎた分戻す
+			// überschüssige Bewegung zurücknehmen
 			if ((down && (getMascot().getAnchor().y >= targetY)) ||
 					(!down && (getMascot().getAnchor().y <= targetY))) {
 				getMascot().setAnchor(new Point(getMascot().getAnchor().x, targetY));

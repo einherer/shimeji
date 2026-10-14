@@ -7,7 +7,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * 少しずれるアクション.
+ * Aktion zum leichten Versetzen.
  * @author Yuki Yamada
  */
 public class Offset extends InstantAction {

@@ -62,7 +62,7 @@ public class WindowsEnvironment extends Environment {
 			br.close();
 			in.close();
 		} catch (final Exception e) {
-			// use defaults
+			// Standardwerte verwenden
 		}
 
 		try {
@@ -78,7 +78,7 @@ public class WindowsEnvironment extends Environment {
 			br.close();
 			in.close();
 		} catch (final Exception e) {
-			// use empty titles
+			// Leere Titelliste verwenden
 		}
 	}
 
@@ -264,6 +264,6 @@ public class WindowsEnvironment extends Environment {
 
 	@Override
 	public void restoreIE() {
-		// Window restoration if needed
+		// Fenster bei Bedarf wiederherstellen
 	}
 }

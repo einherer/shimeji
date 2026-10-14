@@ -11,7 +11,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 /**
- * IE を投げるアクション.
+ * Aktion zum Werfen eines IE-Fensters.
  * @author Yuki Yamada
  */
 public class ThrowIE extends Animate {

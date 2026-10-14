@@ -46,7 +46,7 @@ public class WindowsTranslucentWindow extends JWindow implements TranslucentWind
 		try {
 			this.setBackground(new Color(0, 0, 0, 0));
 		} catch (final Exception e) {
-			// Fallback if per-pixel alpha background is restricted
+			// Ausweichlösung, falls ein Hintergrund mit Alpha-Werten pro Pixel eingeschränkt ist
 		}
 		this.setAlwaysOnTop(true);
 	}
@@ -58,7 +58,7 @@ public class WindowsTranslucentWindow extends JWindow implements TranslucentWind
 
 	@Override
 	public void setToDock(final int value) {
-		// Not needed on Windows
+		// Unter Windows nicht benötigt
 	}
 
 	public WindowsNativeImage getImage() {

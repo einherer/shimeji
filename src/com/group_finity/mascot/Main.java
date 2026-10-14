@@ -33,7 +33,7 @@ import com.group_finity.mascot.exception.ConfigurationException;
 import com.sun.jna.Platform;
 
 /**
- * プログラムのエントリポイント.
+ * Einstiegspunkt des Programms.
  */
 public class Main {
 
@@ -74,31 +74,31 @@ public class Main {
 
 	public void run() {
 
-		// 設定を読み込む
+		// Einstellungen laden
 		loadConfiguration();
 
-		// トレイアイコンを作成する
+		// Taskleistensymbol erstellen
 		if (SystemTray.isSupported()) {
 			createTrayIcon();
 		}
 
-		// しめじを一匹作成する
+		// Ein Maskottchen erstellen
 		createMascot();
 		getManager().start();
 	}
 
 	/**
-	 * 設定ファイルを読み込む.
+	 * Konfigurationsdatei laden.
 	 */
 	private void loadConfiguration() {
 
 		try {
-			log.log(Level.INFO, "設定ファイルを読み込み({0})", "/Behavior.xml");
+			log.log(Level.INFO, "Konfigurationsdatei wird geladen ({0})", "/Behavior.xml");
 
 			final Document actions = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
 					Main.class.getResourceAsStream("/Behavior.xml"));
 
-			log.log(Level.INFO, "設定ファイルを読み込み({0})", "/Actions.xml");
+			log.log(Level.INFO, "Konfigurationsdatei wird geladen ({0})", "/Actions.xml");
 
 			this.getConfiguration().load(new Entry(actions.getDocumentElement()));
 
@@ -110,109 +110,109 @@ public class Main {
 			this.getConfiguration().validate();
 
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, "設定ファイルの読み込みに失敗", e);
+			log.log(Level.SEVERE, "Konfigurationsdatei konnte nicht geladen werden", e);
 			exit();
 		} catch (final SAXException e) {
-			log.log(Level.SEVERE, "設定ファイルの読み込みに失敗", e);
+			log.log(Level.SEVERE, "Konfigurationsdatei konnte nicht geladen werden", e);
 			exit();
 		} catch (final ParserConfigurationException e) {
-			log.log(Level.SEVERE, "設定ファイルの読み込みに失敗", e);
+			log.log(Level.SEVERE, "Konfigurationsdatei konnte nicht geladen werden", e);
 			exit();
 		} catch (final ConfigurationException e) {
-			log.log(Level.SEVERE, "設定ファイルの記述に誤りがあります", e);
+			log.log(Level.SEVERE, "Konfigurationsdatei enthält Fehler", e);
 			exit();
 		}
 	}
 
 	/**
-	 * トレイアイコンを作成する.
+	 * Taskleistensymbol erstellen.
 	 * @throws AWTException
 	 * @throws IOException
 	 */
 	private void createTrayIcon() {
 
-		log.log(Level.INFO, "トレイアイコンを作成");
+		log.log(Level.INFO, "Taskleistensymbol wird erstellt");
 
 		if ( SystemTray.getSystemTray()==null ) {
 			return;
 		}
 
-		// 「増やす」メニューアイテム
-		final MenuItem increaseMenu = new MenuItem("Add one");
+		// Menüeintrag „Maskottchen hinzufügen“
+		final MenuItem increaseMenu = new MenuItem("Maskottchen hinzufügen");
 		increaseMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				createMascot();
 			}
 		});
 
-		// 「あつまれ！」メニューアイテム
-		final MenuItem gatherMenu = new MenuItem("Gather");
+		// Menüeintrag „Versammeln“
+		final MenuItem gatherMenu = new MenuItem("Versammeln");
 		gatherMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				gatherAll();
 			}
 		});
 
-		// 「一匹だけ残す」メニューアイテム
-		final MenuItem oneMenu = new MenuItem("Reduce to 1");
+		// Menüeintrag „Nur eines behalten“
+		final MenuItem oneMenu = new MenuItem("Nur eines behalten");
 		oneMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				remainOne();
 			}
 		});
 
-		final MenuItem openWindowConfMenu = new MenuItem("Settings: Open window.conf");
+		final MenuItem openWindowConfMenu = new MenuItem("Einstellungen: window.conf öffnen");
 		openWindowConfMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				openPath(WINDOW_CONF);
 			}
 		});
 
-		final MenuItem openTitlesConfMenu = new MenuItem("Settings: Open titles.conf");
+		final MenuItem openTitlesConfMenu = new MenuItem("Einstellungen: titles.conf öffnen");
 		openTitlesConfMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				openPath(TITLES_CONF);
 			}
 		});
 
-		final MenuItem openSettingsGuiMenu = new MenuItem("Settings: Open Settings GUI");
+		final MenuItem openSettingsGuiMenu = new MenuItem("Einstellungen öffnen");
 		openSettingsGuiMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				launchSettingsGui();
 			}
 		});
 
-		final MenuItem openAppFolderMenu = new MenuItem("Settings: Open app folder");
+		final MenuItem openAppFolderMenu = new MenuItem("Einstellungen: Programmordner öffnen");
 		openAppFolderMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				openPath(APP_ROOT);
 			}
 		});
 
-		final MenuItem resetWindowConfMenu = new MenuItem("Settings: Reset window.conf");
+		final MenuItem resetWindowConfMenu = new MenuItem("Einstellungen: window.conf zurücksetzen");
 		resetWindowConfMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent event) {
 				resetWindowConf();
 			}
 		});
 
-		//  Restore IE not implemented yet
-		//final MenuItem restoreMenu = new MenuItem("IEを元に戻す");
+		//  Wiederherstellung des IE-Fensters noch nicht implementiert
+		//final MenuItem restoreMenu = new MenuItem("IE-Fenster wiederherstellen");
 		//restoreMenu.addActionListener(new ActionListener() {
 			//public void actionPerformed(final ActionEvent event) {
 				//restoreIE();
 			//}
 		//});
 
-		// 「ばいばい」メニューアイテム
-		final MenuItem closeMenu = new MenuItem("Quit");
+		// Menüeintrag „Beenden“
+		final MenuItem closeMenu = new MenuItem("Beenden");
 		closeMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
 				exit();
 			}
 		});
 
-		// ポップアップメニューを作成
+		// Kontextmenü erstellen
 		final PopupMenu trayPopup = new PopupMenu();
 		trayPopup.add(increaseMenu);
 		trayPopup.add(gatherMenu);
@@ -228,27 +228,27 @@ public class Main {
 		trayPopup.add(closeMenu);
 
 		try {
-			// トレイアイコンを作成
-			final TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "しめじ", trayPopup);
+			// Taskleistensymbol erstellen
+			final TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "Shimeji", trayPopup);
 			icon.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(final MouseEvent e) {
-					// アイコンがダブルクリックされたときも「増える」
+					// Auch beim Doppelklick auf das Symbol ein Maskottchen hinzufügen
 					if (SwingUtilities.isLeftMouseButton(e)) {
 						createMascot();
 					}
 				}
 			});
 
-			// トレイアイコンを表示
+			// Taskleistensymbol anzeigen
 			SystemTray.getSystemTray().add(icon);
 
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
+			log.log(Level.SEVERE, "Taskleistensymbol konnte nicht erstellt werden", e);
 			exit();
 
 		} catch (final AWTException e) {
-//			log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
+//			log.log(Level.SEVERE, "Taskleistensymbol konnte nicht erstellt werden", e);
 			MascotEventHandler.setShowSystemTrayMenu(true);
 			getManager().setExitOnLastRemoved(true);
 		}
@@ -256,18 +256,18 @@ public class Main {
 	}
 
 	/**
-	 * しめじを一匹作成する.
+	 * Ein Maskottchen erstellen.
 	 */
 	public void createMascot() {
 
-		log.log(Level.INFO, "マスコットを作成");
+		log.log(Level.INFO, "Maskottchen wird erstellt");
 
-		// マスコットを1個作成
+		// Ein Maskottchen erstellen
 		final Mascot mascot = new Mascot();
 
-		// 範囲外から開始
+		// Außerhalb des sichtbaren Bereichs beginnen
 		mascot.setAnchor(new Point(-1000, -1000));
-		// ランダムな向きで
+		// Zufällige Blickrichtung wählen
 		mascot.setLookRight(Math.random() < 0.5);
 
 		try {
@@ -276,10 +276,10 @@ public class Main {
 			this.getManager().add(mascot);
 
 		} catch (final BehaviorInstantiationException e) {
-			log.log(Level.SEVERE, "最初の行動の初期化に失敗しました", e);
+			log.log(Level.SEVERE, "Anfangsverhalten konnte nicht initialisiert werden", e);
 			mascot.dispose();
 		} catch (final CantBeAliveException e) {
-			log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+			log.log(Level.SEVERE, "Maskottchen kann in dieser Situation nicht weiterlaufen", e);
 			mascot.dispose();
 		}
 
@@ -315,7 +315,7 @@ public class Main {
 				desktop.edit(file);
 			}
 		} catch (final Exception e) {
-			log.log(Level.WARNING, "Failed to open path: " + path, e);
+			log.log(Level.WARNING, "Pfad konnte nicht geöffnet werden: " + path, e);
 		}
 	}
 
@@ -323,10 +323,10 @@ public class Main {
 		try {
 			java.nio.file.Files.write(
 				java.nio.file.Paths.get(WINDOW_CONF),
-				("Put window offsets on the following lines in this order : x, y, width, height. No entry will default to 0.\n0\n0\n0\n0\n").getBytes(java.nio.charset.StandardCharsets.UTF_8)
+				("Fensterversatz in den folgenden Zeilen angeben: x, y, Breitenzuschlag, Höhenzuschlag. Leere Angaben entsprechen 0.\n0\n0\n0\n0\n").getBytes(java.nio.charset.StandardCharsets.UTF_8)
 			);
 		} catch (final IOException e) {
-			log.log(Level.WARNING, "Failed to reset window.conf", e);
+			log.log(Level.WARNING, "window.conf konnte nicht zurückgesetzt werden", e);
 		}
 	}
 
@@ -334,7 +334,7 @@ public class Main {
 		try {
 			new ProcessBuilder(SETTINGS_SCRIPT).directory(new File(APP_ROOT)).start();
 		} catch (final IOException e) {
-			log.log(Level.WARNING, "Failed to launch Settings GUI", e);
+			log.log(Level.WARNING, "Einstellungen konnten nicht geöffnet werden", e);
 		}
 	}
 
@@ -348,7 +348,7 @@ public class Main {
 			props.load(in);
 			return Boolean.parseBoolean(props.getProperty("selfCloningEnabled", "true"));
 		} catch (final IOException e) {
-			log.log(Level.WARNING, "Failed to read settings.properties, defaulting selfCloningEnabled=true", e);
+			log.log(Level.WARNING, "settings.properties konnte nicht gelesen werden; Standardwert selfCloningEnabled=true wird verwendet", e);
 			return true;
 		}
 	}
