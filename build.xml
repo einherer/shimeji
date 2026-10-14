@@ -16,7 +16,7 @@
       <src path="src_x11"/>
       <src path="src_win"/>
       <classpath>
-        <fileset dir="lib" />
+        <fileset dir="lib" includes="*.jar" />
       </classpath>
     </javac>
   </target>

@@ -106,6 +106,14 @@ public class SettingsForm : Form
         var scaleHint = new Label { Text = "25–200 % · 100 % = Originalgröße · Speichern wirkt auf alle laufenden Figuren.", AutoSize = true, Margin = new Padding(0, 0, 0, 5) };
         charPanel.Controls.Add(scaleHint, 0, 2);
         charPanel.SetColumnSpan(scaleHint, 3);
+        var imports = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
+        var importZip = new Button { Text = "ZIP importieren …", AutoSize = true };
+        var importFolder = new Button { Text = "Ordner importieren …", AutoSize = true };
+        importZip.Click += (s, e) => ImportZip();
+        importFolder.Click += (s, e) => ImportFolder();
+        imports.Controls.AddRange(new Control[] { importZip, importFolder });
+        charPanel.Controls.Add(imports, 0, 3);
+        charPanel.SetColumnSpan(imports, 3);
         grpChar.Controls.Add(charPanel);
         mainLayout.Controls.Add(grpChar, 0, 1);
 
@@ -175,7 +183,7 @@ public class SettingsForm : Form
         if (Directory.Exists(CharactersDir))
         {
             var chars = Directory.GetDirectories(CharactersDir)
-                .Where(d => File.Exists(Path.Combine(d, "shime1.png")))
+                .Where(CharacterImport.IsCharacterDirectory)
                 .Select(Path.GetFileName)
                 .OrderBy(n => n)
                 .ToArray();
@@ -283,19 +291,54 @@ public class SettingsForm : Form
             return false;
         }
 
-        Directory.CreateDirectory(ImgDir);
-        for (int i = 1; i <= 46; i++)
+        try
         {
-            string srcFile = Path.Combine(srcDir, "shime" + i + ".png");
-            string dstFile = Path.Combine(ImgDir, "shime" + i + ".png");
-            if (File.Exists(srcFile))
-            {
-                File.Copy(srcFile, dstFile, true);
-            }
+            if (!CharacterImport.IsCharacterDirectory(srcDir))
+                throw new InvalidDataException("Unvollständige Figur: Benötigt werden shime1.png bis shime46.png.");
+            Directory.CreateDirectory(ImgDir);
+            foreach (string name in CharacterImport.FrameNames)
+                File.Copy(Path.Combine(srcDir, name), Path.Combine(ImgDir, name), true);
+            File.WriteAllText(CurrentCharFile, selected + "\n");
+            return true;
         }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Figurenwechsel fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
 
-        File.WriteAllText(CurrentCharFile, selected + "\n");
-        return true;
+    private void ImportZip()
+    {
+        using (var dialog = new OpenFileDialog { Title = "Shimeji-ZIP importieren (z. B. von shimeji.org)", Filter = "Shimeji-ZIP (*.zip)|*.zip" })
+            if (dialog.ShowDialog(this) == DialogResult.OK) ImportPackage(dialog.FileName);
+    }
+
+    private void ImportFolder()
+    {
+        using (var dialog = new FolderBrowserDialog { Description = "Entpackten Shimeji-Ordner auswählen" })
+            if (dialog.ShowDialog(this) == DialogResult.OK) ImportPackage(dialog.SelectedPath);
+    }
+
+    private void ImportPackage(string source)
+    {
+        try
+        {
+            Cursor = Cursors.WaitCursor;
+            string[] names = CharacterImport.Import(source, CharactersDir);
+            comboCharacter.Items.Clear();
+            comboCharacter.Items.AddRange(Directory.GetDirectories(CharactersDir)
+                .Where(CharacterImport.IsCharacterDirectory).Select(Path.GetFileName).OrderBy(n => n).ToArray());
+            comboCharacter.SelectedItem = names[0];
+            MessageBox.Show("Importiert: " + string.Join(", ", names) +
+                "\nMit ‚Übernehmen + Neustart‘ wird die ausgewählte Figur gestartet.",
+                "Figuren importiert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Import fehlgeschlagen", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        finally { Cursor = Cursors.Default; }
     }
 
     private void RestartShimeji()

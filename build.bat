@@ -24,7 +24,7 @@ if exist ShimejiLauncher.cs (
 )
 
 if exist ShimejiSettingsLauncher.cs (
-    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /nologo /codepage:65001 /target:winexe /out:ShimejiSettings.exe /win32icon:shimeji.ico /r:System.Windows.Forms.dll ShimejiSettingsLauncher.cs >nul
+    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /nologo /codepage:65001 /target:winexe /out:ShimejiSettings.exe /win32icon:shimeji.ico /r:System.Windows.Forms.dll /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll /r:System.Web.Extensions.dll /r:System.Xml.Linq.dll /resource:character_frames.json,Shimeji.CharacterFrames.json /resource:lib/webp/dwebp.exe,Shimeji.dwebp.exe ShimejiSettingsLauncher.cs CharacterImport.cs CharacterFormats.cs CharacterWebp.cs >nul
 )
 
 echo Erstellung erfolgreich! Erstellt: Shimeji.jar, Shimeji.exe, ShimejiSettings.exe

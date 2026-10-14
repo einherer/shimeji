@@ -6,7 +6,9 @@ import subprocess
 import sys
 import tempfile
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
+
+from character_import import import_characters, is_character_directory
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 WINDOW_CONF = os.path.join(APP_ROOT, "window.conf")
@@ -56,7 +58,7 @@ def list_characters():
     names = []
     for name in sorted(os.listdir(CHARACTERS_DIR)):
         path = os.path.join(CHARACTERS_DIR, name)
-        if os.path.isdir(path) and os.path.exists(os.path.join(path, "shime1.png")):
+        if os.path.isdir(path) and is_character_directory(path):
             names.append(name)
     return names
 
@@ -77,8 +79,8 @@ def set_current_character(name):
 
 def apply_character(name):
     src = os.path.join(CHARACTERS_DIR, name)
-    if not os.path.isdir(src):
-        raise FileNotFoundError(f"Figur nicht gefunden: {name}")
+    if not is_character_directory(src):
+        raise ValueError(f"Unvollständige Figur: {name}. Benötigt werden shime1.png bis shime46.png.")
     if not os.path.exists(IMG_DIR):
         os.makedirs(IMG_DIR, exist_ok=True)
     for i in range(1, 47):
@@ -223,6 +225,11 @@ class App(tk.Tk):
         ttk.Label(chars, text="25–200 % · 100 % = Originalgröße · Speichern wirkt auf alle laufenden Figuren.").grid(
             row=2, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
 
+        imports = ttk.Frame(chars)
+        imports.grid(row=3, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
+        ttk.Button(imports, text="ZIP importieren …", command=self.import_zip).pack(side="left", padx=(0, 8))
+        ttk.Button(imports, text="Ordner importieren …", command=self.import_folder).pack(side="left")
+
         behavior = ttk.LabelFrame(self, text="Verhalten")
         behavior.grid(row=2, column=0, sticky="ew", pady=(0, 10))
         ttk.Checkbutton(behavior, text="Selbstvermehrung erlauben", variable=self.self_clone_var).grid(row=0, column=0, sticky="w", padx=10, pady=10)
@@ -337,12 +344,37 @@ class App(tk.Tk):
         messagebox.showinfo("Gespeichert", "Einstellungen gespeichert. Die Skalierung wird auf alle laufenden Figuren angewendet.")
         return True
 
+    def import_zip(self):
+        path = filedialog.askopenfilename(title="Shimeji-ZIP importieren (z. B. von shimeji.org)",
+                                          filetypes=[("Shimeji-ZIP", "*.zip")])
+        if path:
+            self.import_package(path)
+
+    def import_folder(self):
+        path = filedialog.askdirectory(title="Entpackten Shimeji-Ordner auswählen")
+        if path:
+            self.import_package(path)
+
+    def import_package(self, path):
+        try:
+            names = import_characters(path, CHARACTERS_DIR)
+            self.character_combo["values"] = list_characters()
+            self.character_var.set(names[0])
+            messagebox.showinfo("Figuren importiert", "Importiert: " + ", ".join(names) +
+                                "\nMit ‚Übernehmen + Neustart‘ wird die ausgewählte Figur gestartet.")
+        except Exception as error:
+            messagebox.showerror("Import fehlgeschlagen", str(error))
+
     def apply_character_only(self):
         name = self.character_var.get().strip()
         if not name:
             messagebox.showerror("Keine Figur", "Bitte eine Figur auswählen.")
             return False
-        apply_character(name)
+        try:
+            apply_character(name)
+        except Exception as error:
+            messagebox.showerror("Figurenwechsel fehlgeschlagen", str(error))
+            return False
         messagebox.showinfo("Figur übernommen", f"Figur übernommen: {name}")
         return True
 
