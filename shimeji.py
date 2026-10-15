@@ -27,7 +27,7 @@ def main(argv=None):
             try:
                 editor.update()
                 assert editor.title() == "Shimeji Settings"
-                assert editor.character_combo["values"]
+                assert editor.character_vars
                 print("Settings smoke test: character discovery and English Python UI passed.")
             finally:
                 editor.destroy()
@@ -53,13 +53,15 @@ def run_mascots(args):
     from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon, QWidget
     from desktop_windows import DesktopWindows
     from mascot_physics import Mascot, Rect
-    from shimeji_settings import read_settings_props, read_titles_conf, read_window_conf
+    from shimeji_settings import detect_current_characters, read_settings_props, read_titles_conf, read_window_conf
 
     app = QApplication([sys.argv[0]])
     app.setApplicationName("Shimeji")
     app.setQuitOnLastWindowClosed(False)
     identity = hashlib.sha256(os.fsencode(str(APP_ROOT).casefold() if os.name == "nt" else str(APP_ROOT))).hexdigest()[:24]
     server_name = "shimeji-" + identity
+    if args.smoke_test:
+        server_name += "-smoke-" + str(os.getpid())
     # QLockFile closes the race between first launch and the local server listening.
     lock = QLockFile(str(Path(QStandardPaths.writableLocation(QStandardPaths.TempLocation)) / (server_name + ".lock")))
     if not lock.tryLock(0):
@@ -82,13 +84,14 @@ def run_mascots(args):
         raise RuntimeError(server.errorString())
 
     class Sprite(QWidget):
-        def __init__(self, manager, x, y):
+        def __init__(self, manager, x, y, character):
             super().__init__(None, Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus)
             self.manager = manager
+            self.character = character
             self.model = Mascot(x, y)
             self.setAttribute(Qt.WA_TranslucentBackground)
             self.setAttribute(Qt.WA_ShowWithoutActivating)
-            self.setWindowTitle("Shimeji mascot")
+            self.setWindowTitle("Shimeji mascot" + (": " + character if character else ""))
             self.drag_offset = None
             self.drag_sample = None
             self.velocity = (0, 0)
@@ -97,7 +100,7 @@ def run_mascots(args):
             self.show()
 
         def draw(self):
-            key = (self.model.frame, self.model.direction > 0, self.manager.scale)
+            key = (self.character, self.model.frame, self.model.direction > 0, self.manager.scale)
             image = self.manager.pixmap(*key)
             self.image = image
             if key != self.last_image_key:
@@ -175,19 +178,30 @@ def run_mascots(args):
 
         def reload(self):
             images = {}
-            for number in range(1, 47):
-                path = APP_ROOT / "img" / f"shime{number}.png"
-                image = QImage(str(path))
-                if image.isNull():
-                    raise ValueError(f"Cannot load {path}. Apply a complete character in Settings first.")
-                images[number] = image
+            # Load all sets before replacing the current sprites, so a failed reload
+            # leaves the running characters intact. Old installations can use img/.
+            for character in detect_current_characters() or [""]:
+                directory = APP_ROOT / "characters" / character if character else APP_ROOT / "img"
+                frames = {}
+                for number in range(1, 47):
+                    path = directory / f"shime{number}.png"
+                    image = QImage(str(path))
+                    if image.isNull():
+                        raise ValueError(f"Cannot load {path}. Import a complete character in Settings first.")
+                    frames[number] = image
+                images[character] = frames
+            self.preferences()
             for sprite in self.sprites:
                 sprite.close()
+                sprite.deleteLater()
             self.sprites.clear()
             self.images = images
+            self.characters = list(images)
+            self.next_character = 0
             self.cache.clear()
-            self.preferences()
-            self.add()
+            self.last_clone = time.monotonic()
+            for character in self.characters:
+                self.add(character=character)
 
         def preferences(self):
             props = read_settings_props()
@@ -212,10 +226,10 @@ def run_mascots(args):
             self.window = self.desktop.foreground(app.screens(), self.titles, self.offsets,
                 {int(sprite.winId()) for sprite in self.sprites})
 
-        def pixmap(self, frame, right, percent):
-            key = (frame, right, percent)
+        def pixmap(self, character, frame, right, percent):
+            key = (character, frame, right, percent)
             if key not in self.cache:
-                original = self.images[frame]
+                original = self.images[character][frame]
                 if right:
                     original = original.mirrored(True, False)
                 self.cache[key] = QPixmap.fromImage(original.scaled(
@@ -224,9 +238,12 @@ def run_mascots(args):
                     Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
             return self.cache[key]
 
-        def add(self, x=None, y=None):
+        def add(self, x=None, y=None, character=None):
             if len(self.sprites) >= 50:
                 return
+            if character is None:
+                character = self.characters[self.next_character % len(self.characters)]
+                self.next_character += 1
             screen = app.screenAt(QCursor.pos()) or app.primaryScreen()
             area = screen.availableGeometry()
             if x is None:
@@ -234,9 +251,12 @@ def run_mascots(args):
                 x = random.uniform(area.left() + area.width() * .25, area.left() + area.width() * .75)
             if y is None:
                 y = area.top() + 128 * self.scale / 100
-            sprite = Sprite(self, x, y)
+            sprite = Sprite(self, x, y, character)
             self.sprites.append(sprite)
             return sprite
+
+        def clone(self, parent):
+            return self.add(parent.model.x, parent.model.y - 20, character=parent.character)
 
         def safe_tick(self):
             try:
@@ -262,11 +282,12 @@ def run_mascots(args):
                 self.last_clone = now
                 parent = next((s for s in self.sprites if s.model.state not in ("drag", "fall", "climb", "ceiling")), None)
                 if parent:
-                    self.add(parent.model.x, parent.model.y - 20)
+                    self.clone(parent)
 
         def remove(self, sprite):
             self.sprites.remove(sprite)
             sprite.close()
+            sprite.deleteLater()
             if not self.sprites and not self.tray.isVisible():
                 app.quit()
 
@@ -302,7 +323,7 @@ def run_mascots(args):
             if sprite:
                 menu.addAction("Remove this mascot", lambda: self.remove(sprite))
                 menu.addSeparator()
-            menu.addAction("Add mascot", lambda: self.add())
+            menu.addAction("Add mascot", lambda: self.add(character=sprite.character if sprite else None))
             menu.addAction("Gather at cursor", self.gather)
             menu.addAction("Keep one mascot", self.keep_one)
             menu.addSeparator()
@@ -358,18 +379,42 @@ def run_mascots(args):
 
     server.newConnection.connect(accept)
     if args.smoke_test:
-        # Exercise rendering, scaling and live settings without changing user files.
+        # Exercise all selected image sets, cloning, restart and per-character caches.
         def smoke():
-            for percent in (25, 100, 137, 200):
-                manager.scale = percent
-                for state in ("stand", "walk", "drag", "fall", "climb", "ceiling", "spin"):
-                    manager.sprites[0].model.state = state
-                    manager.sprites[0].draw()
-                    app.processEvents()
-            manager.refresh_window()
-            manager.keep_one()
-            print("Qt smoke test: PNG loading, poses, scaling, menus and desktop query passed.")
-            app.quit()
+            try:
+                assert [sprite.character for sprite in manager.sprites] == manager.characters
+                for sprite in list(manager.sprites):
+                    for percent in (25, 100, 137, 200):
+                        manager.scale = percent
+                        for right in (False, True):
+                            sprite.model.direction = 1 if right else -1
+                            for state in ("stand", "walk", "drag", "fall", "climb", "ceiling", "spin"):
+                                sprite.model.state = state
+                                sprite.draw()
+                                original = manager.images[sprite.character][sprite.model.frame]
+                                expected = original.mirrored(True, False) if right else original
+                                expected = expected.scaled(
+                                    max(1, round(original.width() * percent / 100)),
+                                    max(1, round(original.height() * percent / 100)),
+                                    Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+                                assert sprite.image.toImage() == QPixmap.fromImage(expected).toImage()
+                    if len(manager.sprites) < 50:
+                        clone = manager.clone(sprite)
+                        assert clone.character == sprite.character
+                manager.reload()
+                for character in manager.characters:
+                    if len(manager.sprites) < 50:
+                        assert manager.add().character == character
+                manager.refresh_window()
+                manager.keep_one()
+                print("Qt smoke test: PNG loading, poses, scaling, menus, desktop query and "
+                      f"{len(manager.characters)} independent character sets passed.")
+            except Exception:
+                import traceback
+                traceback.print_exc()
+                app.exit(1)
+            else:
+                app.quit()
         QTimer.singleShot(100, smoke)
     try:
         return app.exec()

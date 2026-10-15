@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import tkinter as tk
+import webbrowser
 from tkinter import ttk, messagebox, filedialog
 
 from character_import import import_characters, is_character_directory
@@ -66,26 +67,44 @@ def list_characters():
     return names
 
 
-def detect_current_character():
+def detect_current_characters():
+    installed = list_characters()
     if os.path.exists(CURRENT_CHARACTER):
-        with open(CURRENT_CHARACTER, "r", encoding="utf-8", errors="replace") as f:
-            val = f.read().strip()
-        if val:
-            return val
-    return "Ayaka"
+        with open(CURRENT_CHARACTER, "r", encoding="utf-8", errors="replace") as stream:
+            names = list(dict.fromkeys(line.strip() for line in stream if line.strip()))
+        selected = [name for name in names if name in installed]
+        if selected:
+            return selected[:50]
+    return ["Ayaka"] if "Ayaka" in installed else installed[:1]
 
 
-def set_current_character(name):
+def detect_current_character():
+    return next(iter(detect_current_characters()), "Ayaka")
+
+
+def set_current_characters(names):
+    names = list(dict.fromkeys(names))
+    installed = list_characters()
+    if not names:
+        raise ValueError("Please select at least one character.")
+    if len(names) > 50:
+        raise ValueError("Select at most 50 characters.")
+    if any(name not in installed for name in names):
+        raise ValueError("Please select complete, installed characters.")
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=os.path.dirname(CURRENT_CHARACTER),
                                          delete=False) as stream:
             temporary = stream.name
-            stream.write(name + "\n")
+            stream.write("\n".join(names) + "\n")
         os.replace(temporary, CURRENT_CHARACTER)
     finally:
         if temporary and os.path.exists(temporary):
             os.unlink(temporary)
+
+
+def set_current_character(name):
+    set_current_characters([name])
 
 
 def apply_character(name):
@@ -189,11 +208,11 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Shimeji Settings")
-        self.geometry("820x650")
-        self.minsize(780, 600)
+        self.geometry("820x790")
+        self.minsize(780, 720)
         self.configure(padx=12, pady=12)
         self.option_add("*Font", "Sans 10")
-        self.character_var = tk.StringVar()
+        self.character_vars = {}
         self.self_clone_var = tk.BooleanVar(value=True)
         self.scale_var = tk.StringVar(value="100")
         self._syncing_scale = False
@@ -208,32 +227,49 @@ class App(tk.Tk):
         top.grid(row=0, column=0, sticky="ew")
         top.grid_columnconfigure(0, weight=1)
         ttk.Label(top, text="Shimeji Settings", font=("Sans", 14, "bold")).grid(row=0, column=0, sticky="w")
-        ttk.Label(top, text="Configure character, scale, window position, window titles and self-cloning.").grid(row=1, column=0, sticky="w", pady=(4, 10))
+        ttk.Label(top, text="Choose characters, scale, window position, window titles and self-cloning.").grid(row=1, column=0, sticky="w", pady=(4, 10))
 
-        chars = ttk.LabelFrame(self, text="Character")
+        chars = ttk.LabelFrame(self, text="Installed characters")
         chars.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         chars.grid_columnconfigure(1, weight=1)
-        ttk.Label(chars, text="Current character").grid(row=0, column=0, sticky="w", padx=10, pady=10)
-        self.character_combo = ttk.Combobox(chars, textvariable=self.character_var, state="readonly", values=list_characters())
-        self.character_combo.grid(row=0, column=1, sticky="ew", padx=(0, 10), pady=10)
-        ttk.Button(chars, text="Apply character", command=self.apply_character_only).grid(row=0, column=2, sticky="e", padx=(0, 10), pady=10)
+        ttk.Label(chars, text="Check all characters you want to run together (one of each).").grid(
+            row=0, column=0, columnspan=3, sticky="w", padx=10, pady=(8, 4))
+        list_wrap = ttk.Frame(chars)
+        list_wrap.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=(0, 10))
+        list_wrap.grid_columnconfigure(0, weight=1)
+        self.character_canvas = tk.Canvas(list_wrap, height=135, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(list_wrap, orient="vertical", command=self.character_canvas.yview)
+        self.character_canvas.configure(yscrollcommand=scrollbar.set)
+        self.character_canvas.grid(row=0, column=0, sticky="ew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.character_list = ttk.Frame(self.character_canvas)
+        list_window = self.character_canvas.create_window((0, 0), window=self.character_list, anchor="nw")
+        self.character_list.bind("<Configure>", lambda event: self.character_canvas.configure(
+            scrollregion=self.character_canvas.bbox("all")))
+        self.character_canvas.bind("<Configure>", lambda event: self.character_canvas.itemconfigure(
+            list_window, width=event.width))
+        self.character_canvas.bind("<MouseWheel>", self._scroll_characters)
+        self.character_canvas.bind("<Button-4>", lambda event: self.character_canvas.yview_scroll(-1, "units"))
+        self.character_canvas.bind("<Button-5>", lambda event: self.character_canvas.yview_scroll(1, "units"))
+        ttk.Button(chars, text="Start selected", command=self.apply_selection).grid(
+            row=1, column=2, sticky="ne", padx=(0, 10))
 
-        ttk.Label(chars, text="Scale").grid(row=1, column=0, sticky="w", padx=10, pady=(0, 8))
+        ttk.Label(chars, text="Scale").grid(row=2, column=0, sticky="w", padx=10, pady=(0, 8))
         self.scale_slider = ttk.Scale(chars, from_=25, to=200, command=self._scale_from_slider)
-        self.scale_slider.grid(row=1, column=1, sticky="ew", padx=(0, 10), pady=(0, 8))
+        self.scale_slider.grid(row=2, column=1, sticky="ew", padx=(0, 10), pady=(0, 8))
         scale_input = ttk.Frame(chars)
-        scale_input.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(0, 8))
+        scale_input.grid(row=2, column=2, sticky="e", padx=(0, 10), pady=(0, 8))
         ttk.Spinbox(scale_input, from_=25, to=200, increment=1, textvariable=self.scale_var,
                     width=5).pack(side="left")
         ttk.Label(scale_input, text=" %").pack(side="left")
         self.scale_var.trace_add("write", self._scale_from_input)
         ttk.Label(chars, text="25–200% · 100% = original size · Save updates all running characters.").grid(
-            row=2, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
+            row=3, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
 
         imports = ttk.Frame(chars)
-        imports.grid(row=3, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
+        imports.grid(row=4, column=0, columnspan=3, sticky="w", padx=10, pady=(0, 10))
         ttk.Button(imports, text="Import ZIP …", command=self.import_zip).pack(side="left", padx=(0, 8))
-        ttk.Button(imports, text="Import folder …", command=self.import_folder).pack(side="left")
+        ttk.Button(imports, text="Download ZIPs from shimeji.org", command=self.open_character_site).pack(side="left")
 
         behavior = ttk.LabelFrame(self, text="Behavior")
         behavior.grid(row=2, column=0, sticky="ew", pady=(0, 10))
@@ -312,13 +348,31 @@ class App(tk.Tk):
             finally:
                 self._syncing_scale = False
 
+    def selected_characters(self):
+        return [name for name, variable in self.character_vars.items() if variable.get()]
+
+    def _scroll_characters(self, event):
+        self.character_canvas.yview_scroll(-1 if event.delta > 0 else 1, "units")
+        return "break"
+
+    def refresh_characters(self, selected):
+        for child in self.character_list.winfo_children():
+            child.destroy()
+        self.character_vars.clear()
+        for name in list_characters():
+            variable = tk.BooleanVar(value=name in selected)
+            self.character_vars[name] = variable
+            checkbox = ttk.Checkbutton(self.character_list, text=name, variable=variable)
+            checkbox.pack(anchor="w", fill="x", padx=4, pady=2)
+            checkbox.bind("<MouseWheel>", self._scroll_characters)
+            checkbox.bind("<Button-4>", lambda event: self.character_canvas.yview_scroll(-1, "units"))
+            checkbox.bind("<Button-5>", lambda event: self.character_canvas.yview_scroll(1, "units"))
+        if not self.character_vars:
+            ttk.Label(self.character_list, text="No characters installed. Import a ZIP to get started.").pack(
+                anchor="w", padx=4, pady=4)
+
     def load_values(self):
-        chars = list_characters()
-        self.character_combo["values"] = chars
-        current = detect_current_character()
-        if current not in chars and chars:
-            current = chars[0]
-        self.character_var.set(current)
+        self.refresh_characters(detect_current_characters())
         props = read_settings_props()
         self.self_clone_var.set(bool(props.get("selfCloningEnabled", True)))
         self.scale_var.set(str(props.get("scalePercent", 100)))
@@ -329,7 +383,7 @@ class App(tk.Tk):
         self.text.delete("1.0", "end")
         self.text.insert("1.0", read_titles_conf())
 
-    def save(self):
+    def save(self, show_message=True):
         vals = [self.entries[k].get().strip() or "0" for k in ["x", "y", "w", "h"]]
         try:
             [int(v) for v in vals]
@@ -343,10 +397,17 @@ class App(tk.Tk):
         except ValueError:
             messagebox.showerror("Invalid scale", "Enter an integer from 25 to 200 percent.")
             return False
+        try:
+            set_current_characters(self.selected_characters())
+        except (OSError, ValueError) as error:
+            messagebox.showerror("Character selection failed", str(error))
+            return False
         write_window_conf(vals)
         write_titles_conf(self.text.get("1.0", "end").rstrip() + "\n" if self.text.get("1.0", "end").strip() else "")
         write_settings_props(self.self_clone_var.get(), scale_percent)
-        messagebox.showinfo("Saved", "Settings saved. Scale is applied to all running characters.")
+        if show_message:
+            messagebox.showinfo("Saved", "Settings saved. Scale is applied to all running characters.\n"
+                                "Use Start selected or Apply + restart to run the saved character selection.")
         return True
 
     def import_zip(self):
@@ -355,40 +416,29 @@ class App(tk.Tk):
         if path:
             self.import_package(path)
 
-    def import_folder(self):
-        path = filedialog.askdirectory(title="Select extracted Shimeji folder")
-        if path:
-            self.import_package(path)
+    def open_character_site(self):
+        webbrowser.open("https://shimeji.org/")
 
     def import_package(self, path):
         try:
             names = import_characters(path, CHARACTERS_DIR)
-            self.character_combo["values"] = list_characters()
-            self.character_var.set(names[0])
+            self.refresh_characters(self.selected_characters() + names)
             messagebox.showinfo("Characters imported", "Imported: " + ", ".join(names) +
-                                "\nClick ‘Apply + restart’ to start the selected character.")
+                                "\nCheck the characters you want, then click Start selected to run them together.")
         except Exception as error:
             messagebox.showerror("Import failed", str(error))
 
-    def apply_character_only(self):
-        name = self.character_var.get().strip()
-        if not name:
-            messagebox.showerror("No character", "Please select a character.")
-            return False
+    def apply_selection(self):
         try:
-            apply_character(name)
-        except Exception as error:
-            messagebox.showerror("Character change failed", str(error))
-            return False
-        messagebox.showinfo("Character applied", f"Character applied: {name}")
-        return True
-
-    def apply_all(self):
-        if not self.save():
-            return
-        if not self.apply_character_only():
+            set_current_characters(self.selected_characters())
+        except (OSError, ValueError) as error:
+            messagebox.showerror("Character selection failed", str(error))
             return
         self.restart()
+
+    def apply_all(self):
+        if self.save(show_message=False):
+            self.restart()
 
     def reset_window(self):
         for key, val in zip(["x", "y", "w", "h"], DEFAULT_WINDOW):

@@ -125,8 +125,8 @@ class CharacterImportTest(unittest.TestCase):
             app.withdraw()
             try:
                 app.import_package(self.archive)
-                self.assertEqual(app.character_var.get(), 'Kinger')
-                self.assertIn('Kinger', app.character_combo['values'])
+                self.assertEqual(app.selected_characters(), ['Kinger'])
+                self.assertIn('Kinger', app.character_vars)
                 error.assert_not_called()
             finally:
                 app.destroy()

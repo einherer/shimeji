@@ -45,7 +45,8 @@ class ScalingSettingsTest(unittest.TestCase):
             self.assertEqual(self.path.read_text(encoding="utf-8"), "scalePercent=100\n")
 
     def test_ui_sync_and_save_validation(self):
-        with patch.object(settings, "WINDOW_CONF", str(self.path.parent / "window.conf")), \
+        with patch.object(settings, "CURRENT_CHARACTER", str(self.path.parent / ".current_character")), \
+             patch.object(settings, "WINDOW_CONF", str(self.path.parent / "window.conf")), \
              patch.object(settings, "TITLES_CONF", str(self.path.parent / "titles.conf")), \
              patch.object(settings.messagebox, "showinfo"), \
              patch.object(settings.messagebox, "showerror"):

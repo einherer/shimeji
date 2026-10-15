@@ -11,7 +11,7 @@ The mascot engine uses Qt for Python; the settings editor uses Python's Tkinter.
 - Transparent, animated mascots with a tray menu and right-click menu.
 - Walk, run, sit, lie down, crawl, spin, fall, climb screen sides and crawl along the screen ceiling.
 - Drag and throw mascots; land on the taskbar work area or the foreground window's top edge.
-- Add mascots, gather at the cursor, keep one, or enable automatic cloning (maximum 50).
+- Run several different characters together; add mascots, gather at the cursor, keep one, or enable automatic cloning (maximum 50).
 - Live **25–200%** scaling, including custom percentages, with monitor DPI handled by Qt.
 - Import standard PNG sets, Shimeji-EE PNG/XML packs and `legacy_default_v1` JSON/WebP packs.
 - English interface, error messages and documentation.
@@ -70,8 +70,8 @@ The build copies your current `img/`, `characters/` and configuration into the o
 Open Settings from a mascot's right-click menu, the tray menu, `run-settings.bat` / `run-settings.sh`, or the packaged settings executable.
 
 1. Download a character ZIP, for example from [shimeji.org](https://shimeji.org/).
-2. Click **Import ZIP …**, or **Import folder …** for an extracted package.
-3. Select the character and click **Apply + restart**.
+2. Click **Import ZIP ...**. **Download ZIPs from shimeji.org** opens the download site in your browser.
+3. Check one or more installed characters in the list and click **Start selected**. One mascot of each checked character starts together. **Apply + restart** also saves all other settings.
 
 Nested image folders and multiple characters in a single package are detected automatically. Characters are stored in `characters/<Name>/`. Existing characters are preserved; duplicate names get suffixes such as ` (2)`.
 
@@ -92,9 +92,9 @@ For manual installation, create `characters/YOUR_CHARACTER/` with all 46 standar
 - **`window.conf`**: header followed by four integers: x offset, y offset, extra width, extra height.
 - **`titles.conf`**: one foreground-window title filter per line; blank means all titled foreground windows. Matching ignores case and allows partial titles.
 - **`settings.properties`**: `selfCloningEnabled=true|false` and `scalePercent=25..200` (default `100`). Other keys are preserved by the editor.
-- **`.current_character`**: selected character name; applying copies its standard frames to `img/`.
+- **`.current_character`**: selected character names, one per line. Existing single-name files remain compatible. Each mascot loads its own frames from `characters/<Name>/`; `img/` is a fallback for installations without a character library.
 
-Save applies scale, cloning, title filters and window offsets to running mascots within a second. Applying a different character requires **Apply + restart**. `python shimeji.py --restart` reloads only the instance belonging to this installation. A second normal launch adds a mascot. `--quit` stops this installation's instance. Communication uses a local user-restricted socket and a per-installation lock; unrelated processes are never terminated.
+Save applies scale, cloning, title filters and window offsets to running mascots within a second. Character selection is saved with **Save** and takes effect with **Start selected** or **Apply + restart**. Clones keep their parent's character. The tray's **Add mascot** and a second normal launch cycle through the selected characters; **Add mascot** from a mascot's own menu adds the same character. `python shimeji.py --restart` reloads only the instance belonging to this installation. A second normal launch adds a mascot. `--quit` stops this installation's instance. Communication uses a local user-restricted socket and a per-installation lock; unrelated processes are never terminated.
 
 The Python engine replaces the old Java/Rhino action interpreter with a built-in movement state machine. **Old `conf/Actions.xml` and `conf/Behavior.xml` scripts are no longer interpreted.** Imported sprites remain compatible, but exact Java action timings, window carrying/throwing, window-side climbing and arbitrary scripted behaviors are not reproduced. Foreground-window top edges and screen sides/ceiling are supported. Linux window integration and mixed-DPI multi-monitor behavior need testing on the target desktop.
 
@@ -105,7 +105,7 @@ python -B -m unittest discover -s tests -p 'test_*.py' -v
 python shimeji.py --smoke-test
 ```
 
-The tests cover imports, XML/JSON restrictions, WebP conversion, settings persistence, UI scale validation, gravity, landing, dragging, window movement and screen climbing. The smoke test loads the actual character PNGs and exercises Qt rendering and scaling. A graphical desktop and Tkinter are needed; Linux also needs `dwebp`. For headless Qt rendering tests, set `QT_QPA_PLATFORM=offscreen` (Tk tests still need a display such as Xvfb).
+The tests cover imports, XML/JSON restrictions, WebP conversion, settings persistence, UI scale validation, multiple-character selection and rendering, gravity, landing, dragging, window movement and screen climbing. The smoke test loads the actual character PNGs and exercises Qt rendering and scaling. A graphical desktop and Tkinter are needed; Linux also needs `dwebp`. For headless Qt rendering tests, set `QT_QPA_PLATFORM=offscreen` (Tk tests still need a display such as Xvfb).
 
 Windows convenience command: `powershell -ExecutionPolicy Bypass -File tests/run_import_checks.ps1`.
 
