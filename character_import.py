@@ -34,14 +34,14 @@ def _copy_frame(source, target):
     # Bound actual bytes as well as ZIP metadata; accept PNGs with reasonable dimensions.
     data = source.read(MAX_FRAME_BYTES + 1)
     if len(data) > MAX_FRAME_BYTES:
-        raise ValueError("Eine Bilddatei ist größer als 16 MiB.")
+        raise ValueError("An image file exceeds 16 MiB.")
     if data[:4] == b"RIFF":
         data = convert_webp(data, target)
     if len(data) < 33 or data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
-        raise ValueError("Ungültige PNG-Bilddatei: " + target.name)
+        raise ValueError("Invalid PNG image: " + target.name)
     width, height = struct.unpack(">II", data[16:24])
     if not (1 <= width <= 4096 and 1 <= height <= 4096):
-        raise ValueError("Die Bildgröße muss zwischen 1 und 4096 Pixeln liegen.")
+        raise ValueError("Image dimensions must be between 1 and 4096 pixels.")
     target.write_bytes(data)
     return len(data)
 
@@ -61,18 +61,18 @@ def import_characters(source, characters_dir):
                         continue
                     entries.append((path.relative_to(source).as_posix(), path))
                     if len(entries) > MAX_ENTRIES:
-                        raise ValueError("Das Paket enthält zu viele Dateien (maximal 10000).")
+                        raise ValueError("The package contains too many files (maximum 10000).")
             opener = lambda entry: entry.open("rb")
         else:
             if source.suffix.lower() != ".zip":
-                raise ValueError("Bitte ein ZIP-Paket oder einen entpackten Figurenordner auswählen.")
+                raise ValueError("Please select a ZIP package or an extracted character folder.")
             archive = zipfile.ZipFile(source)
             if len(archive.infolist()) > MAX_ENTRIES:
-                raise ValueError("Das Paket enthält zu viele Dateien (maximal 10000).")
+                raise ValueError("The package contains too many files (maximum 10000).")
             for entry in archive.infolist():
                 path = entry.filename.replace("\\", "/")
                 if path.startswith("/") or ":" in path or ".." in path.split("/"):
-                    raise ValueError("Unsicherer Dateipfad im ZIP-Paket: " + path)
+                    raise ValueError("Unsafe file path in ZIP package: " + path)
                 if not entry.is_dir():
                     entries.append((path, entry))
             opener = archive.open
@@ -98,7 +98,7 @@ def import_characters(source, characters_dir):
                             total += _copy_frame(stream, target / name)
                         copied[entry] = target / name
                     if total > MAX_TOTAL_BYTES:
-                        raise ValueError("Die Figurenbilder sind zusammen größer als 256 MiB.")
+                        raise ValueError("Character images exceed 256 MiB in total.")
             existing = {p.name.casefold() for p in characters_dir.iterdir()}
             try:
                 for index, (label, _) in enumerate(groups):

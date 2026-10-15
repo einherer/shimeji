@@ -10,7 +10,7 @@
 - License and patent grant: [COPYING](COPYING), [PATENTS](PATENTS).
 - PNG/zlib notices for the decoder's PNG output: [LICENSE.libpng](LICENSE.libpng), [LICENSE.zlib](LICENSE.zlib).
 
-The Windows settings build embeds the decoder and `character_frames.json`; imported WebP sprites are decoded locally in the temporary import directory. The decoder never comes from the character archive. No Python installation or network connection is needed by the native Windows importer.
+Portable builds bundle the decoder and `character_frames.json`; imported WebP sprites are decoded locally in the temporary import directory. The decoder never comes from the character archive. The settings editor and importer are written in Python; portable builds include the Python runtime.
 
 The Python importer uses this executable on Windows. On Linux install the distribution's `dwebp` command (Ubuntu/Debian: `sudo apt install webp`). No Pillow dependency is required.
 
